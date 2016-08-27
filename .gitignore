@@ -301,3 +301,14 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# project specific
+node_modules
+npm-debug.log
+src/app/**/*.js
+src/app/**/*.js.map
+npm-debug.log.*
+Code/App/ToDo.Web/wwwroot/app/**/*.*
+Code/App/ToDo.Web/wwwroot/libs/**/*.*
+Code/App/ToDo.Web/bin/**/*.*
+Code/App/.vs/**/*.*

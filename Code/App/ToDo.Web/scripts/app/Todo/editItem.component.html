@@ -1,0 +1,41 @@
+<br/>
+<div class='panel panel-info'>
+    <div class='panel-heading'>
+        Edit Task
+    </div>
+    <div class='panel-body'>
+        <form (ngSubmit)="onSubmit()" #editForm="ngForm">
+            <!--{{diagnostic}}-->
+            <div class="row">
+                <div class="form-group">
+                    <label for=" Description">Description</label>
+                    <input type="text " class="form-control " required [(ngModel)]="editedItem.Description " name="Description " #Description>
+                </div>
+
+                <div class="form-group">
+                    <label for="Priority">Priority</label>
+                    <select class="form-control" required [(ngModel)]="editedItem.PriorityId" name="Priority">
+                        <option *ngFor="let p of priorities" [value]="p.Id">{{p.PriorityLevel}}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for=" Class ">Class</label>
+                    <input type="string " class="form-control " [(ngModel)]="editedItem.Class " name="Class ">
+                </div>
+
+                <div class="form-group">
+                    <label for="DueBy">Due By</label>
+                    <input type="date" class="form-control" [(ngModel)]="editedItem.DueBy" name="DueBy">
+                </div>
+            </div>
+
+            <div class="row">
+                <div>
+                    <button type="submit" class="btn btn-xs btn-primary" [disabled]="!editForm.form.valid"><i class="fa fa-plus"></i> Done</button>
+                    <button class="btn btn-xs btn-danger" (click)="Cancel()"><i class="fa fa-minus"></i> Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
