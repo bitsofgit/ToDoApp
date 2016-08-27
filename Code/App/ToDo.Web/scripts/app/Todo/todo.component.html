@@ -18,8 +18,8 @@
                             <app-overdue [DueBy]="item.DueBy"></app-overdue>
                         </h4>
                         <p>
-                            <span class="label label-info">{{item.Class}} </span>&nbsp;
-                            <span class="label label-info">{{item.DueBy | date:'MM/dd/yyyy'}} </span>&nbsp; 
+                            <span *ngIf="item.Class" class="label label-info">{{item.Class}} </span>&nbsp;
+                            <span *ngIf="item.DueBy" class="label label-info">{{item.DueBy | date:'MM/dd/yyyy'}} </span>&nbsp; 
                             <span class="label label-info">{{item.PriorityLevel}}</span>&nbsp;
                             <a (click)="MoveToInProgress(item.Id)"><i class="fa fa-arrow-right pull-right" title="Move to In Progress"></i></a> 
                             <a (click)="RequestForEdit(item.Id)"><i class="fa fa-pencil pull-right" title="Edit"></i></a> 
@@ -53,8 +53,8 @@
                             <app-overdue [DueBy]="item.DueBy"></app-overdue>
                         </h4>
                         <p>
-                            <span class="label label-info">{{item.Class}} </span>&nbsp;
-                            <span class="label label-info">{{item.DueBy | date:'MM/dd/yyyy'}} </span>&nbsp; 
+                            <span *ngIf="item.Class" class="label label-info">{{item.Class}} </span>&nbsp;
+                            <span *ngIf="item.DueBy" class="label label-info">{{item.DueBy | date:'MM/dd/yyyy'}} </span>&nbsp; 
                             <span class="label label-info">{{item.PriorityLevel}} </span>&nbsp;
                             <a (click)="MarkAsDone(item.Id)"><i class="fa fa-check pull-right" title="Mark As Done"></i></a>
                             <a (click)="RequestForEdit(item.Id)"><i class="fa fa-pencil pull-right" title="Edit"></i></a> 
@@ -87,8 +87,8 @@
                     <div *ngIf="item.Status==3">
                         <h4>{{item.Description | uppercase}}</h4>
                         <p>
-                            <span class="label label-info">{{item.Class}} </span>&nbsp;
-                            <span class="label label-info">{{item.CompletedOn | date:'MM/dd/yyyy'}} </span>&nbsp; 
+                            <span *ngIf="item.Class" class="label label-info">{{item.Class}} </span>&nbsp;
+                            <span *ngIf="item.CompletedOn" class="label label-info">{{item.CompletedOn | date:'MM/dd/yyyy'}} </span>&nbsp; 
                             <span class="label label-info">{{item.PriorityLevel}} </span>&nbsp;
                             <a (click)="showDetails(item.Id)"><i class="fa fa-list pull-right" title="Show Details"></i></a>
                             <a (click)="RequestForEdit(item.Id)"><i class="fa fa-pencil pull-right" title="Edit"></i></a> 

@@ -31,20 +31,15 @@ VALUES
 (GetDate(), 'deshpandeakhil@gmail.com', 'Akhil Deshpande'),
 (GetDate(), 'kasturipore@gmail.com', 'Kasturi Pore')
 GO
-INSERT INTO Items (Class, Description, DueBy, CreatedDate, [PriorityId], UserId)
+INSERT INTO Items (Class, Description, DueBy, CreatedDate, [PriorityId], UserId, Status, CompletedOn)
 VALUES
-('Tech','Install RTM version of SQL Server 2016', '2016-06-01', GetDate(),1,1),
-('Tech','Go to github and download new samples', '2016-06-02', GetDate(),1,1),
-('Tech','Install new Management Studio to try samples',  '2016-06-02', GetDate(),1,1),
-('Grocery','Bring Milk', '2016-06-02', GetDate(),1,1),
-('Grocery','Bring Coffee', '2016-06-02', GetDate(),1,1),
-('Misc','OCI Card',  '2016-06-17', GetDate(),1,1),
-('Misc','Buy Phone', '2016-06-17', GetDate(),1,1)
-GO
-
-update Items set [Status] = 1 where Id in (1,3,7)
-update Items set [Status] = 2 where Id in (2,4)
-update Items set [Status] = 3, CompletedOn=GETDATE() where Id in (5,6)
+('Tech','Install RTM version of SQL Server 2016', '2016-06-01', GetDate(),1,1,1,null),
+('Tech','Go to github and download new samples', '2016-06-02', GetDate(),1,1,2, null),
+('Tech','Install new Management Studio to try samples',  '2016-06-02', GetDate(),1,1,3, GetDate()),
+('Grocery','Bring Milk', '2016-06-02', GetDate(),1,1,1, null),
+('Grocery','Bring Coffee', '2016-06-02', GetDate(),1,1,2, null),
+('Misc','OCI Card',  '2016-06-17', GetDate(),1,1,3, getdate()),
+('Misc','Buy Phone', '2016-06-17', GetDate(),1,1,1,null)
 GO
 
 INSERT INTO SubItems (Description, ItemId)

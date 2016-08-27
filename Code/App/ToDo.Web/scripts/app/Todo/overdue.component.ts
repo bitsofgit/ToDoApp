@@ -9,8 +9,13 @@ export class OverdueComponent implements OnInit {
     constructor() { }
 
     ngOnInit() {
-        let d: Date = new Date(this.DueBy.toString());
-        this.IsOverDue = new Date() > d;
+        if (this.DueBy) {
+            let d: Date = new Date(this.DueBy.toString());
+            this.IsOverDue = new Date() > d;
+        } else {
+            this.IsOverDue = false;
+        }
+        
     }
 
     @Input() DueBy: Date;

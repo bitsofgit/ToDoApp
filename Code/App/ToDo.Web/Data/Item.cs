@@ -11,7 +11,7 @@ namespace ToDo.Web.Data
         public string Description { get; set; }
         public string Class { get; set; }
         public DateTime? CompletedOn { get; set; }
-        public DateTime DueBy { get; set; }
+        public DateTime? DueBy { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public int UserId { get; set; }

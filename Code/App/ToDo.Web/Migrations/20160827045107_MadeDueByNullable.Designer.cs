@@ -8,9 +8,10 @@ using ToDo.Web.Data;
 namespace ToDo.Web.Migrations
 {
     [DbContext(typeof(ToDoContext))]
-    partial class ToDoContextModelSnapshot : ModelSnapshot
+    [Migration("20160827045107_MadeDueByNullable")]
+    partial class MadeDueByNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.0-rtm-21431")
