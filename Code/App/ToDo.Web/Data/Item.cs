@@ -18,7 +18,7 @@ namespace ToDo.Web.Data
         public User User { get; set; }
         public int? PriorityId { get; set; }
         public Priority Priority { get; set; }
-        public int? Status { get; set; }
+        public int Status { get; set; }
         public List<SubItem> SubItems { get; set; }
     }
 }
