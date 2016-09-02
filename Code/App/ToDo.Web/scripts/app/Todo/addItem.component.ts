@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import {IItem, IPriority} from './Interfaces';
 import {ItemService} from './ItemService';
@@ -7,8 +7,7 @@ import {ItemService} from './ItemService';
 @Component({
     //moduleId: module.id,
     selector: 'app-addItem',
-    templateUrl: './app/Todo/additem.component.html',
-    directives: [REACTIVE_FORM_DIRECTIVES]
+    templateUrl: './app/Todo/additem.component.html'
 })
 export class AddItemComponent implements OnInit {
     showForm: boolean = false;

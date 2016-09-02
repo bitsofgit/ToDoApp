@@ -1,8 +1,8 @@
 import { NgModule }       from '@angular/core';
 import { BrowserModule  } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
-import {FormsModule, FormBuilder} from '@angular/forms';
-import {HTTP_PROVIDERS} from '@angular/http';
+import { FormsModule, FormBuilder } from '@angular/forms';
+import { HttpModule }    from '@angular/http';
 import 'rxjs/Rx'; // adds ALL RxJS statics & operators to Observable
 
 import { AppComponent }   from './app.component';
@@ -26,13 +26,14 @@ import {TodoComponent,
     ],
     imports: [
         BrowserModule,
-        FormsModule
+        FormsModule,
+        HttpModule
     ],
     bootstrap: [
         AppComponent],
     providers: [
         ItemService
-        , HTTP_PROVIDERS
+        //, HTTP_PROVIDERS
         , FormBuilder]
 
 
