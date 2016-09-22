@@ -1,7 +1,16 @@
+<h1>
+    To Do List
+</h1>
+
 <div class="row">
-    <app-addItem (notifyAdd)="OnNotifyAdd($event)"></app-addItem>
+    <div class="col-md-offset-1 col-md-1">
+        <a routerLink="/add" routerLinkActive="active">
+            <i class="fa fa-plus" title="Add Item"></i>
+            Add Item
+        </a>
+    </div>
 </div>
-<br/>
+<br />
 <!--<div>
     {{diagnostic}}
 </div>-->
@@ -14,27 +23,28 @@
             <div class='panel-body'>
                 <div *ngFor="let item of items">
                     <div *ngIf="item.Status==1">
-                        <h4>{{item.Description | uppercase}}
+                        <h4>
+                            {{item.Description | uppercase}}
                             <app-overdue [DueBy]="item.DueBy"></app-overdue>
                         </h4>
                         <p>
                             <span *ngIf="item.Class" class="label label-info">{{item.Class}} </span>&nbsp;
-                            <span *ngIf="item.DueBy" class="label label-info">{{item.DueBy | date:'MM/dd/yyyy'}} </span>&nbsp; 
+                            <span *ngIf="item.DueBy" class="label label-info">{{item.DueBy | date:'MM/dd/yyyy'}} </span>&nbsp;
                             <span class="label label-info">{{item.PriorityLevel}}</span>&nbsp;
-                            <a (click)="MoveToInProgress(item.Id)"><i class="fa fa-arrow-right pull-right" title="Move to In Progress"></i></a> 
-                            <a (click)="RequestForEdit(item.Id)"><i class="fa fa-pencil pull-right" title="Edit"></i></a> 
-                            <a (click)="RequestForDelete(item.Id)"><i class="fa fa-trash pull-right" title="Delete"></i></a> 
+                            <a (click)="MoveToInProgress(item.Id)"><i class="fa fa-arrow-right pull-right" title="Move to In Progress"></i></a>
+                            <a (click)="gotoEdit(item.Id)"><i class="fa fa-pencil pull-right" title="Edit"></i></a>
+                            <a (click)="RequestForDelete(item.Id)"><i class="fa fa-trash pull-right" title="Delete"></i></a>
                         </p>
                         <div class="alert alert-danger" *ngIf="itemToBeDeleted == item.Id">
                             <span>Are you Sure?</span>
                             <a (click)="Delete(item.Id)">Yes</a> |
                             <a (click)="CancelDelete()">No</a>
                         </div>
-                        <div *ngIf="itemToBeEdited == item.Id">
-                            <app-editItem [editedItem]="item" (notifyDone)="OnNotifyEditDone($event)" (notifyCancel)="OnNotifyEditCancel" ></app-editItem>
-                        </div>
+                        <!--<div *ngIf="itemToBeEdited == item.Id">
+                            <app-editItem [editedItem]="item" (notifyDone)="OnNotifyEditDone($event)" (notifyCancel)="OnNotifyEditCancel"></app-editItem>
+                        </div>-->
                         <app-subitem (notifySubItemAdd)="OnNotifyAddSubItem($event)" (notifySubItemDelete)="OnNotifyDeleteSubItem($event)" [item]="item"></app-subitem>
-                        <hr/>
+                        <hr />
                     </div>
                 </div>
             </div>
@@ -49,16 +59,17 @@
             <div class='panel-body'>
                 <div *ngFor="let item of items">
                     <div *ngIf="item.Status==2">
-                        <h4>{{item.Description | uppercase}}
+                        <h4>
+                            {{item.Description | uppercase}}
                             <app-overdue [DueBy]="item.DueBy"></app-overdue>
                         </h4>
                         <p>
                             <span *ngIf="item.Class" class="label label-info">{{item.Class}} </span>&nbsp;
-                            <span *ngIf="item.DueBy" class="label label-info">{{item.DueBy | date:'MM/dd/yyyy'}} </span>&nbsp; 
+                            <span *ngIf="item.DueBy" class="label label-info">{{item.DueBy | date:'MM/dd/yyyy'}} </span>&nbsp;
                             <span class="label label-info">{{item.PriorityLevel}} </span>&nbsp;
                             <a (click)="MarkAsDone(item.Id)"><i class="fa fa-check pull-right" title="Mark As Done"></i></a>
-                            <a (click)="RequestForEdit(item.Id)"><i class="fa fa-pencil pull-right" title="Edit"></i></a> 
-                            <a (click)="RequestForDelete(item.Id)"><i class="fa fa-trash pull-right" title="Delete"></i></a> 
+                            <a (click)="gotoEdit(item.Id)"><i class="fa fa-pencil pull-right" title="Edit"></i></a>
+                            <a (click)="RequestForDelete(item.Id)"><i class="fa fa-trash pull-right" title="Delete"></i></a>
                             <a (click)="MoveBackToDo(item.Id)"><i class="fa fa-arrow-left pull-right" title="Move Back To Do"></i></a>
                         </p>
                         <div class="alert alert-danger" *ngIf="itemToBeDeleted == item.Id">
@@ -66,11 +77,11 @@
                             <a (click)="Delete(item.Id)">Yes</a> |
                             <a (click)="CancelDelete()">No</a>
                         </div>
-                        <div *ngIf="itemToBeEdited == item.Id">
+                        <!--<div *ngIf="itemToBeEdited == item.Id">
                             <app-editItem [editedItem]="item" (notifyDone)="OnNotifyEditDone($event)"></app-editItem>
-                        </div>
+                        </div>-->
                         <app-subitem (notifySubItemAdd)="OnNotifyAddSubItem($event)" (notifySubItemDelete)="OnNotifyDeleteSubItem($event)" [item]="item"></app-subitem>
-                        <hr/>
+                        <hr />
                     </div>
                 </div>
             </div>
@@ -88,25 +99,25 @@
                         <h4>{{item.Description | uppercase}}</h4>
                         <p>
                             <span *ngIf="item.Class" class="label label-info">{{item.Class}} </span>&nbsp;
-                            <span *ngIf="item.CompletedOn" class="label label-info">{{item.CompletedOn | date:'MM/dd/yyyy'}} </span>&nbsp; 
+                            <span *ngIf="item.CompletedOn" class="label label-info">{{item.CompletedOn | date:'MM/dd/yyyy'}} </span>&nbsp;
                             <span class="label label-info">{{item.PriorityLevel}} </span>&nbsp;
                             <a (click)="showDetails(item.Id)"><i class="fa fa-list pull-right" title="Show Details"></i></a>
-                            <a (click)="RequestForEdit(item.Id)"><i class="fa fa-pencil pull-right" title="Edit"></i></a> 
+                            <a (click)="gotoEdit(item.Id)"><i class="fa fa-pencil pull-right" title="Edit"></i></a>
                             <a (click)="RequestForDelete(item.Id)"><i class="fa fa-trash pull-right" title="Delete"></i></a>
-                            <a (click)="MoveToInProgress(item.Id)"><i class="fa fa-arrow-left pull-right" title="Move to In Progress"></i></a> 
+                            <a (click)="MoveToInProgress(item.Id)"><i class="fa fa-arrow-left pull-right" title="Move to In Progress"></i></a>
                         </p>
                         <div class="alert alert-danger" *ngIf="itemToBeDeleted == item.Id">
                             <span>Are you Sure?</span>
                             <a (click)="Delete(item.Id)">Yes</a> |
                             <a (click)="CancelDelete()">No</a>
                         </div>
-                        <div *ngIf="itemToBeEdited == item.Id">
+                        <!--<div *ngIf="itemToBeEdited == item.Id">
                             <app-editItem [editedItem]="item" (notifyDone)="OnNotifyEditDone($event)"></app-editItem>
-                        </div>
+                        </div>-->
                         <div *ngIf="showDetailsForId == item.Id">
                             <app-subitem (notifySubItemAdd)="OnNotifyAddSubItem($event)" (notifySubItemDelete)="OnNotifyDeleteSubItem($event)" [item]="item"></app-subitem>
                         </div>
-                        <hr/>
+                        <hr />
                     </div>
                 </div>
             </div>

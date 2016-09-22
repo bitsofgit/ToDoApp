@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, OnChanges } from '@angular/core';
-
+import { Router } from '@angular/router';
 import {IItem, ISubItem, IPriority} from './Interfaces';
 import {ItemService} from './ItemService';
 
@@ -12,12 +12,13 @@ export class TodoComponent implements OnInit, OnDestroy, OnChanges {
     pageTitle: "To Do List";
     items: IItem[] = [];
     itemToBeDeleted: number;
-    itemToBeEdited: number;
+    //itemToBeEdited: number;
     showDetailsForId: number;
     priorities: IPriority[];
     get diagnostic() { return JSON.stringify(this.priorities); }
 
-    constructor(private _itemService: ItemService) { }
+    constructor(private _itemService: ItemService,
+                private _router: Router) { }
 
     // Application Hooks 
     ngOnInit() {
@@ -122,38 +123,11 @@ export class TodoComponent implements OnInit, OnDestroy, OnChanges {
             );
         console.log("Item " + id + " deleted successfully");
         this.itemToBeDeleted = null;
-
-        //for (var i = 0; i < this.items.length; i++) {
-        //    if (this.items[i].Id == id) {
-        //        this.items.splice(i, 1);
-        //        break;
-        //    }
-        //}
     }
 
-    //DeleteSubItem(itemId: number, subItemId: number): void {
-    //    //ToDo: validation
-
-    //    //ToDo: Show Confirm Popup
-
-    //    //ToDo: call service to delete
-
-    //    for (var i = 0; i < this.items.length; i++) {
-    //        if (this.items[i].Id == itemId) {
-    //            let item = this.items[i];
-    //            for (var j = 0; j < item.SubItems.length; j++) {
-    //                if (item.SubItems[j].Id == subItemId) {
-    //                    item.SubItems.splice(j, 1);
-    //                    break;
-    //                }
-    //            }
-    //        }
-    //    }
+    //OnNotifyAdd(item: IItem): void {
+    //    this.InitializeItems();
     //}
-
-    OnNotifyAdd(item: IItem): void {
-        this.InitializeItems();
-    }
 
     RequestForDelete(id: number): void {
         this.itemToBeDeleted = id;
@@ -163,23 +137,27 @@ export class TodoComponent implements OnInit, OnDestroy, OnChanges {
         this.itemToBeDeleted = null;
     }
 
-    RequestForEdit(id: number): void {
-        if (this.itemToBeEdited == id) {
-            this.itemToBeEdited = null;
-            return;
+    gotoEdit(id: number): void {
+        if (id) {
+            this._router.navigate(['/edit', id]);
         }
 
-        this.itemToBeEdited = id;
+        //if (this.itemToBeEdited == id) {
+        //    this.itemToBeEdited = null;
+        //    return;
+        //}
+
+        //this.itemToBeEdited = id;
     }
 
-    OnNotifyEditDone(item: IItem): void {
-        this.itemToBeEdited = null;
-        this.InitializeItems();
-    }
+    //OnNotifyEditDone(item: IItem): void {
+    //    this.itemToBeEdited = null;
+    //    this.InitializeItems();
+    //}
 
-    OnNotifyEditCancel(): void {
-        this.itemToBeEdited = null;
-    }
+    //OnNotifyEditCancel(): void {
+    //    this.itemToBeEdited = null;
+    //}
 
     OnNotifyDeleteSubItem(message: string): void {
         this.InitializeItems();

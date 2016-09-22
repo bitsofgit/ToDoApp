@@ -29,6 +29,14 @@ export class ItemService {
             .catch(this.handleError);
     }
 
+    getItemById(id: number): Observable<IItem> {
+        console.log("calling itemservice.getItemById : " + id);
+
+        return this._http.get(ITEM_URL + "/" + id)
+            .map(this.sendJsonResponse)
+            .catch(this.handleError);
+    }
+
     private sendJsonResponse(response: Response) {
         return response.json();
     }

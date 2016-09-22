@@ -30,7 +30,7 @@ namespace ToDo.Web.Controllers
                 throw new NullReferenceException("repo is null");
             this._repo = repo;
 
-            if(memCache == null)
+            if (memCache == null)
                 throw new NullReferenceException("memCache is null");
             this._memCache = memCache;
         }
@@ -82,16 +82,24 @@ namespace ToDo.Web.Controllers
                 Helper.Log(ex.Message);
                 throw;
             }
-         
+
         }
 
         // GET api/Todo/5
         [HttpGet("{itemId}")]
         public JsonResult Get(int itemId)
         {
-            var item = _repo.GetItemById(1, itemId);
-            var result = Mapper.Map<ItemVM>(item);
-            return Json(result);
+            try
+            {
+                var item = _repo.GetItemById(1, itemId);
+                var result = Mapper.Map<ItemVM>(item);
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                Helper.Log(ex.Message);
+                throw;
+            }
         }
 
         // POST api/Todo

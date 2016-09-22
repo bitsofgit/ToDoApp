@@ -7,35 +7,32 @@ import 'rxjs/Rx'; // adds ALL RxJS statics & operators to Observable
 
 import { AppComponent }   from './app.component';
 import {HeaderComponent} from './Header/header.component';
-import {TodoComponent,
-    OverdueComponent,
-    AddItemComponent,
-    EditItemComponent,
-    SubItemComponent,
-    ItemService} from './Todo/index';
+import {AboutUsComponent} from './AboutUs/aboutus.component';
+import {PageNotFoundComponent} from './PageNotFound/pagenotfound.component';
+
+import {TodoModule} from './Todo/todo.module';
+
+import { routing, appRoutingProviders } from './app.routing';
 
 @NgModule({
     declarations: [
         AppComponent,
         HeaderComponent,
-        TodoComponent,
-        OverdueComponent,
-        AddItemComponent,
-        EditItemComponent,
-        SubItemComponent
+        AboutUsComponent,
+        PageNotFoundComponent
     ],
     imports: [
         BrowserModule,
         FormsModule,
-        HttpModule
+        HttpModule,
+        routing,
+        TodoModule
     ],
-    bootstrap: [
-        AppComponent],
+    bootstrap: [AppComponent],
     providers: [
-        ItemService
-        //, HTTP_PROVIDERS
-        , FormBuilder]
-
-
+        FormBuilder
+        , appRoutingProviders
+    ]
 })
+
 export class AppModule { }
