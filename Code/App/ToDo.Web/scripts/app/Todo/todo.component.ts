@@ -139,7 +139,7 @@ export class TodoComponent implements OnInit, OnDestroy, OnChanges {
 
     gotoEdit(id: number): void {
         if (id) {
-            this._router.navigate(['/edit', id]);
+            this._router.navigate(['/todo/edit', id]);
         }
 
         //if (this.itemToBeEdited == id) {

@@ -10,12 +10,12 @@ const todoRoutes: Routes = [
         }
     },
     {
-        path: 'add', component: AddItemComponent, data: {
+        path: 'todo/add', component: AddItemComponent, data: {
             title: 'Add Item'
         }
     },
     {
-        path: 'edit/:id', component: EditItemComponent
+        path: 'todo/edit/:id', component: EditItemComponent
     }
 ];
 
