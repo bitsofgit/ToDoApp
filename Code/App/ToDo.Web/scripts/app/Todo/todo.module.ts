@@ -3,7 +3,6 @@ import { RouterModule } from '@angular/router';
 import { BrowserModule  } from '@angular/platform-browser';
 import { FormsModule, FormBuilder } from '@angular/forms';
 import { HttpModule }    from '@angular/http';
-import 'rxjs/Rx'; // adds ALL RxJS statics & operators to Observable
 
 
 import {TodoComponent,
