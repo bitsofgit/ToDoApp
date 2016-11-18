@@ -1,38 +1,31 @@
 import { NgModule }       from '@angular/core';
 import { BrowserModule  } from '@angular/platform-browser';
-import { RouterModule } from '@angular/router';
 import { FormsModule, FormBuilder } from '@angular/forms';
 import { HttpModule }    from '@angular/http';
 import './rxjs-extensions';
 
 import { AppComponent }   from './app.component';
 import {HeaderComponent} from './Header/header.component';
-import {AboutUsComponent} from './AboutUs/aboutus.component';
-import {PageNotFoundComponent} from './PageNotFound/pagenotfound.component';
 
 import {TodoModule} from './Todo/todo.module';
 
-import { routing, appRoutingProviders } from './app.routing';
+import {AppRoutingModule, routableComponents} from './app-routing.module';
 
 @NgModule({
     declarations: [
         AppComponent,
         HeaderComponent,
-        AboutUsComponent,
-        PageNotFoundComponent
+        routableComponents
     ],
     imports: [
         BrowserModule,
         FormsModule,
         HttpModule,
-        routing,
-        TodoModule
+        TodoModule,
+        AppRoutingModule
     ],
     bootstrap: [AppComponent],
-    providers: [
-        FormBuilder
-        , appRoutingProviders
-    ]
+    providers: [FormBuilder]
 })
 
 export class AppModule { }
