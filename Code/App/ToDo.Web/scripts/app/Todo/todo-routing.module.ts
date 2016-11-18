@@ -1,4 +1,4 @@
-﻿import { ModuleWithProviders } from '@angular/core';
+﻿import { NgModule }       from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import {TodoComponent, AddItemComponent, EditItemComponent} from "./index";
@@ -19,4 +19,15 @@ const todoRoutes: Routes = [
     }
 ];
 
-export const todoRouting: ModuleWithProviders = RouterModule.forChild(todoRoutes);
+@NgModule({
+    imports: [RouterModule.forChild(todoRoutes)],
+    exports: [RouterModule]
+})
+
+export class ToDoRoutingModule { }
+
+export const todoRoutableComponents = [
+    TodoComponent,
+    AddItemComponent,
+    EditItemComponent
+];

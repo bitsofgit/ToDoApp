@@ -1,31 +1,27 @@
 ﻿import { NgModule }       from '@angular/core';
-import { RouterModule } from '@angular/router';
 import { BrowserModule  } from '@angular/platform-browser';
 import { FormsModule, FormBuilder } from '@angular/forms';
 import { HttpModule }    from '@angular/http';
 
 
-import {TodoComponent,
+import {
     OverdueComponent,
-    AddItemComponent,
-    EditItemComponent,
     SubItemComponent,
     ItemService} from './index';
-import { todoRouting } from './todo.routing';
+
+import {ToDoRoutingModule, todoRoutableComponents} from './todo-routing.module';
 
 @NgModule({
     declarations: [
-        TodoComponent,
         OverdueComponent,
-        AddItemComponent,
-        EditItemComponent,
-        SubItemComponent
+        SubItemComponent,
+        todoRoutableComponents
     ],
     imports: [
         BrowserModule,
         FormsModule,
         HttpModule,
-        todoRouting
+        ToDoRoutingModule
     ],
     providers: [
         ItemService
