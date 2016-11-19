@@ -9,11 +9,7 @@
         <div class="pull-right">
             <a (click)="RequestForDelete(si.Id)"><i class="fa fa-trash" title="Delete"></i></a>
         </div>
-        <div class="well well-sm alert alert-danger" *ngIf="subItemToBeDeleted == si.Id">
-            <span>Are you Sure?</span>
-            <a (click)="DeleteSubItem(si)">Yes</a> |
-            <a (click)="CancelDelete()">No</a>
-        </div>
+        <app-areyousure *ngIf="subItemToBeDeleted == si.Id" [que]="'Are You Sure?'" (notifyYes)="DeleteSubItem(si)" (notifyNo)="CancelDelete()"></app-areyousure>
     </div>
 </div>
 

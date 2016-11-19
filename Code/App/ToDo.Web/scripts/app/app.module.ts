@@ -5,7 +5,7 @@ import { HttpModule }    from '@angular/http';
 import './rxjs-extensions';
 
 import { AppComponent }   from './app.component';
-import {HeaderComponent} from './Header/header.component';
+import { HeaderComponent} from './Header/header.component';
 
 import {TodoModule} from './Todo/todo.module';
 

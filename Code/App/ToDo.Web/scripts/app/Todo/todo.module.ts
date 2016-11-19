@@ -3,6 +3,7 @@ import { BrowserModule  } from '@angular/platform-browser';
 import { FormsModule, FormBuilder } from '@angular/forms';
 import { HttpModule }    from '@angular/http';
 
+import { AreYouSureModule } from '../AreYouSure/areyousure.module';
 
 import {
     OverdueComponent,
@@ -15,13 +16,15 @@ import {ToDoRoutingModule, todoRoutableComponents} from './todo-routing.module';
     declarations: [
         OverdueComponent,
         SubItemComponent,
-        todoRoutableComponents
+        todoRoutableComponents,
     ],
     imports: [
         BrowserModule,
         FormsModule,
         HttpModule,
-        ToDoRoutingModule
+        ToDoRoutingModule,
+        AreYouSureModule
+        
     ],
     providers: [
         ItemService
