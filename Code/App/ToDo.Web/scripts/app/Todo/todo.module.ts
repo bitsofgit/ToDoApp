@@ -3,7 +3,7 @@ import { BrowserModule  } from '@angular/platform-browser';
 import { FormsModule, FormBuilder } from '@angular/forms';
 import { HttpModule }    from '@angular/http';
 
-import { AreYouSureModule } from '../AreYouSure/areyousure.module';
+import { SharedModule } from '../Shared/shared.module';
 
 import {
     OverdueComponent,
@@ -23,7 +23,7 @@ import {ToDoRoutingModule, todoRoutableComponents} from './todo-routing.module';
         FormsModule,
         HttpModule,
         ToDoRoutingModule,
-        AreYouSureModule
+        SharedModule
         
     ],
     providers: [

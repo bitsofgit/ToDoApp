@@ -1,6 +1,6 @@
 ﻿import { NgModule }       from '@angular/core';
 
-import { AreYouSureComponent } from './areyousure.component';
+import { AreYouSureComponent } from './AreYouSure/areyousure.component';
 
 @NgModule({
     declarations: [AreYouSureComponent],
@@ -8,4 +8,4 @@ import { AreYouSureComponent } from './areyousure.component';
 
 })
 
-export class AreYouSureModule { }
+export class SharedModule { }

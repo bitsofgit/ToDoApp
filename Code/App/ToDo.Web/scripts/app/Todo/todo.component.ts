@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy, OnChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import {IItem, ISubItem, IPriority} from './Interfaces';
 import {ItemService} from './ItemService';
-import {AreYouSureComponent} from '../AreYouSure/areyousure.component';
 
 @Component({
     // moduleId: module.id,
