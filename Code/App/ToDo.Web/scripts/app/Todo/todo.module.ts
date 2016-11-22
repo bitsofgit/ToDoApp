@@ -8,7 +8,8 @@ import { SharedModule } from '../Shared/shared.module';
 import {
     OverdueComponent,
     SubItemComponent,
-    ItemService} from './index';
+    ItemService,
+    CanActivateAuthGuard} from './index';
 
 import {ToDoRoutingModule, todoRoutableComponents} from './todo-routing.module';
 
@@ -28,7 +29,8 @@ import {ToDoRoutingModule, todoRoutableComponents} from './todo-routing.module';
     ],
     providers: [
         ItemService
-        , FormBuilder]
+        , FormBuilder
+        ,CanActivateAuthGuard]
 })
 
 export class TodoModule { }

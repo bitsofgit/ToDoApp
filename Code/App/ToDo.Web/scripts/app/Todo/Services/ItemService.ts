@@ -3,7 +3,7 @@ import {Http, Response} from "@angular/http";
 import {Observable} from "rxjs/Observable";
 import 'rxjs/add/observable/throw';
 
-import {IItem, ISubItem, IPriority} from "./Interfaces";
+import {IItem, ISubItem, IPriority} from "../Interfaces";
 
 const ITEM_URL = "api/todo";
 const SUBITEM_URL = "api/subitem";

@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {Router, ActivatedRoute} from '@angular/router';
 
 import {IItem, IPriority} from './Interfaces';
-import {ItemService} from './ItemService';
+import {ItemService} from './Services/ItemService';
 
 @Component({
     //moduleId: module.id,

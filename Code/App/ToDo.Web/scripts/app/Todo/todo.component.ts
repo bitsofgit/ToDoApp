@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, OnChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import {IItem, ISubItem, IPriority} from './Interfaces';
-import {ItemService} from './ItemService';
+import {ItemService} from './Services/ItemService';
 
 @Component({
     // moduleId: module.id,

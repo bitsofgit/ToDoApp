@@ -1,7 +1,8 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 
 import {IItem, ISubItem} from './Interfaces';
-import {ItemService} from './ItemService';
+import {ItemService} from './Services/ItemService';
+
 
 @Component({
     // moduleId: module.id,

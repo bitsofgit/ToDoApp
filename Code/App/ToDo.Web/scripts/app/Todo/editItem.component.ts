@@ -3,8 +3,7 @@ import {Router, ActivatedRoute} from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
 import {IItem, IPriority} from './Interfaces';
-import {ItemService} from './ItemService';
-
+import {ItemService} from './Services/ItemService';
 
 @Component({
     //moduleId: module.id,
