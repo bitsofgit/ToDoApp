@@ -13,9 +13,11 @@ const routes: Routes = [
     {
         path: 'about',
         component: AboutUsComponent,
-        data: {
-            title: 'About Us'
-        }
+        data: { title: 'About Us' }
+    },
+    {
+        path: 'todo',
+        loadChildren: 'app/Todo/todo.module#TodoModule' // Lazy load module
     },
     { path: '**', component: PageNotFoundComponent }
 ];

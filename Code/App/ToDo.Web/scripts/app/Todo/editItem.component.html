@@ -30,7 +30,7 @@
         <div class="row">
             <div class="col-md-2">
                 <button type="submit" class="btn btn-xs btn-primary" [disabled]="!editForm.form.valid"><i class="fa fa-plus"></i> Done</button>
-                <button class="btn btn-xs btn-danger" (click)="Cancel()"><i class="fa fa-minus"></i> Cancel</button>
+                <button class="btn btn-xs btn-danger" routerLink="/todo"><i class="fa fa-minus"></i> Cancel</button>
             </div>
         </div>
     </form>

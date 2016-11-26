@@ -19,7 +19,7 @@ export class EditItemComponent implements OnInit, OnDestroy {
     priorities: IPriority[];
     //sub: Subscription;
     id: number;
-    get diagnostic() { return JSON.stringify(this.id); }
+    //get diagnostic() { return JSON.stringify(this.id); }
     editedItemString: string;
 
     constructor(private _itemService: ItemService,
@@ -75,11 +75,6 @@ export class EditItemComponent implements OnInit, OnDestroy {
                 this.gotoTodo();
             },
             error => console.log(error));
-    }
-
-    Cancel(): void {
-        //this.notifyCancel.emit("");
-        this.gotoTodo();
     }
 
     gotoTodo() {

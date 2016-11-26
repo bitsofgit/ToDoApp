@@ -7,8 +7,6 @@ import './rxjs-extensions';
 import { AppComponent }   from './app.component';
 import { HeaderComponent} from './Header/header.component';
 
-import {TodoModule} from './Todo/todo.module';
-
 import {AppRoutingModule, routableComponents} from './app-routing.module';
 
 @NgModule({
@@ -21,7 +19,6 @@ import {AppRoutingModule, routableComponents} from './app-routing.module';
         BrowserModule,
         FormsModule,
         HttpModule,
-        TodoModule,
         AppRoutingModule
     ],
     bootstrap: [AppComponent],
