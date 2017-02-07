@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,11 +15,12 @@ namespace ToDo.Web.Data
         public DateTime? DueBy { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
-        public int UserId { get; set; }
-        public User User { get; set; }
         public int? PriorityId { get; set; }
         public Priority Priority { get; set; }
         public int Status { get; set; }
         public List<SubItem> SubItems { get; set; }
+        [Required]
+        public string AppUserId { get; set; }
+        public AppUser AppUser { get; set; }
     }
 }

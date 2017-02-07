@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using ToDo.Web.Data;
 
 namespace ToDo.Web.Repository
@@ -10,25 +12,29 @@ namespace ToDo.Web.Repository
     public interface IItemRepository
     {
         IEnumerable<Priority> GetPriorities();
-        IEnumerable<Item> GetAllItems(int userId);
-        Item GetItemById(int userId, int itemId);
-        Item AddItem(int userId, Item newItem);
-        Item UpdateItem(int userId, int itemId, Item newItem);
-        bool DeleteItem(int userId, int ItemId);
-        bool DeleteSubItem(int userId, int subItemId);
-        SubItem GetSubItemById(int userId, int subItemId);
-        SubItem AddSubItem(int userId, SubItem subItem);
+        IEnumerable<Item> GetAllItems(string appUserId);
+        Item GetItemById(string appUserId, int itemId);
+        Item AddItem(string appUserId, Item newItem);
+        Item UpdateItem(string appUserId, int itemId, Item newItem);
+        bool DeleteItem(string appUserId, int ItemId);
+        bool DeleteSubItem(string appUserId, int subItemId);
+        SubItem GetSubItemById(string appUserId, int subItemId);
+        SubItem AddSubItem(string appUserId, SubItem subItem);
     }
     public class ItemRepository : IItemRepository
     {
         private readonly ToDoContext _ctx;
+        private ILogger<ItemRepository> _logger;
 
-        public ItemRepository(ToDoContext ctx)
+        public ItemRepository(ToDoContext ctx, ILogger<ItemRepository> logger)
         {
             if (ctx == null)
                 throw new NullReferenceException("ctx is null");
+            _ctx = ctx;
 
-            this._ctx = ctx;
+            if (logger == null)
+                throw new NullReferenceException("logger is null");
+            _logger = logger;
         }
 
         public IEnumerable<Priority> GetPriorities()
@@ -36,29 +42,38 @@ namespace ToDo.Web.Repository
             return _ctx.Priorities.ToList();
         }
 
-        public IEnumerable<Item> GetAllItems(int userId)
+        public IEnumerable<Item> GetAllItems(string appUserId)
         {
+            if (string.IsNullOrWhiteSpace(appUserId))
+                throw new NullReferenceException("appUserId can not be null.");
+
             var results = _ctx.Items
-                .Where(i => i.UserId == userId)
+                .Where(i => i.AppUserId == appUserId)
                 .Include(i => i.SubItems)
                 .ToList();
 
             return results;
         }
 
-        public Item GetItemById(int userId, int itemId)
+        public Item GetItemById(string appUserId, int itemId)
         {
+            if (string.IsNullOrWhiteSpace(appUserId))
+                throw new NullReferenceException("appUserId can not be null.");
+
             return _ctx.Items
                 .Include(i => i.SubItems)
-                .FirstOrDefault(i => i.UserId == userId && i.Id == itemId);
+                .FirstOrDefault(i => i.AppUserId == appUserId && i.Id == itemId);
         }
 
-        public Item AddItem(int userId, Item newItem)
+        public Item AddItem(string appUserId, Item newItem)
         {
             try
             {
-                newItem.UserId = userId;
+                if(string.IsNullOrWhiteSpace(appUserId))
+                    throw new NullReferenceException("appUserId can not be null or empty.");
+
                 newItem.CreatedDate = DateTime.Now;
+                newItem.AppUserId = appUserId;
                 if (ValidateItem(newItem))
                 {
                     _ctx.Items.Add(newItem);
@@ -68,19 +83,22 @@ namespace ToDo.Web.Repository
             }
             catch (Exception ex)
             {
-                // Log exception
+               _logger.LogError($"Error while adding Item: {ex}");
                 return null;
             }
         }
 
-        public Item UpdateItem(int userId, int itemId, Item newItem)
+        public Item UpdateItem(string appUserId, int itemId, Item newItem)
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(appUserId))
+                    throw new NullReferenceException("appUserId can not be null or empty.");
+
                 if (newItem == null)
                     return null;
 
-                Item existingItem = _ctx.Items.FirstOrDefault(i => i.UserId == userId && i.Id == itemId);
+                Item existingItem = _ctx.Items.FirstOrDefault(i => i.AppUserId == appUserId && i.Id == itemId);
                 if (existingItem == null)
                     return null;
 
@@ -100,7 +118,7 @@ namespace ToDo.Web.Repository
             }
             catch (Exception ex)
             {
-                // Log exception
+                _logger.LogError($"Error while updating Item: {ex}");
                 return null;
             }
         }
@@ -115,11 +133,14 @@ namespace ToDo.Web.Repository
             return _ctx.SaveChanges() > 0;
         }
 
-        public bool DeleteItem(int userId, int itemId)
+        public bool DeleteItem(string appUserId, int itemId)
         {
             try
             {
-                var item = GetItemById(userId, itemId);
+                if (string.IsNullOrWhiteSpace(appUserId))
+                    throw new NullReferenceException("appUserId can not be null or empty.");
+
+                var item = GetItemById(appUserId, itemId);
                 if (item == null) return true;
 
                 // delete subitems
@@ -131,16 +152,19 @@ namespace ToDo.Web.Repository
             }
             catch (Exception ex)
             {
-                // Log Exception
+                _logger.LogError($"Error while deleting Item: {ex}");
                 return false;
             }
         }
 
-        public bool DeleteSubItem(int userId, int subItemId)
+        public bool DeleteSubItem(string appUserId, int subItemId)
         {
             try
             {
-                var subItem = GetSubItemById(userId, subItemId);
+                if (string.IsNullOrWhiteSpace(appUserId))
+                    throw new NullReferenceException("appUserId can not be null or empty.");
+
+                var subItem = GetSubItemById(appUserId, subItemId);
                 if (subItem == null)
                     return true;
 
@@ -149,13 +173,16 @@ namespace ToDo.Web.Repository
             }
             catch (Exception ex)
             {
-                // Log Exception
+                _logger.LogError($"Error while deleting sub Item: {ex}");
                 return false;
             }
         }
 
-        public SubItem GetSubItemById(int userId, int subItemId)
+        public SubItem GetSubItemById(string appUserId, int subItemId)
         {
+            if (string.IsNullOrWhiteSpace(appUserId))
+                throw new NullReferenceException("appUserId can not be null or empty.");
+
             var subItem = _ctx.SubItems.FirstOrDefault(si => si.Id == subItemId);
             if (subItem == null) return null;
 
@@ -163,13 +190,16 @@ namespace ToDo.Web.Repository
             var item = _ctx.Items.FirstOrDefault(i => i.Id == subItem.ItemId);
             if (item == null) return null;
 
-            return item.UserId == userId ? subItem : null;
+            return item.AppUserId == appUserId ? subItem : null;
         }
 
-        public SubItem AddSubItem(int userId, SubItem subItem)
+        public SubItem AddSubItem(string appUserId, SubItem subItem)
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(appUserId))
+                    throw new NullReferenceException("appUserId can not be null or empty.");
+
                 if (ValidateSubItem(subItem))
                 {
                     _ctx.SubItems.Add(subItem);
@@ -179,7 +209,7 @@ namespace ToDo.Web.Repository
             }
             catch (Exception ex)
             {
-                // Log exception
+                _logger.LogError($"Error while adding sub Item: {ex}");
                 return null;
             }
         }

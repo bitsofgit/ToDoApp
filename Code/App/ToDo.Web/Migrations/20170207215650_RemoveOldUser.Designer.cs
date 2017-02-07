@@ -8,9 +8,10 @@ using ToDo.Web.Data;
 namespace ToDo.Web.Migrations
 {
     [DbContext(typeof(ToDoContext))]
-    partial class ToDoContextModelSnapshot : ModelSnapshot
+    [Migration("20170207215650_RemoveOldUser")]
+    partial class RemoveOldUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.0-rtm-22752")
@@ -183,8 +184,7 @@ namespace ToDo.Web.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("AppUserId")
-                        .IsRequired();
+                    b.Property<string>("AppUserId");
 
                     b.Property<string>("Class");
 
@@ -291,8 +291,7 @@ namespace ToDo.Web.Migrations
                 {
                     b.HasOne("ToDo.Web.Data.AppUser", "AppUser")
                         .WithMany()
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("AppUserId");
 
                     b.HasOne("ToDo.Web.Data.Priority", "Priority")
                         .WithMany()

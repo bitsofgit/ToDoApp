@@ -8,9 +8,10 @@ using ToDo.Web.Data;
 namespace ToDo.Web.Migrations
 {
     [DbContext(typeof(ToDoContext))]
-    partial class ToDoContextModelSnapshot : ModelSnapshot
+    [Migration("20170207205942_AddAppUserToItem")]
+    partial class AddAppUserToItem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.0-rtm-22752")
@@ -183,8 +184,7 @@ namespace ToDo.Web.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("AppUserId")
-                        .IsRequired();
+                    b.Property<string>("AppUserId");
 
                     b.Property<string>("Class");
 
@@ -196,19 +196,41 @@ namespace ToDo.Web.Migrations
 
                     b.Property<DateTime?>("DueBy");
 
+                    b.Property<int?>("OldUserId");
+
                     b.Property<int?>("PriorityId");
 
                     b.Property<int>("Status");
 
                     b.Property<DateTime?>("UpdatedDate");
 
+                    b.Property<int>("UserId");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AppUserId");
 
+                    b.HasIndex("OldUserId");
+
                     b.HasIndex("PriorityId");
 
                     b.ToTable("Items");
+                });
+
+            modelBuilder.Entity("ToDo.Web.Data.OldUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<string>("EmailId");
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OldUsers");
                 });
 
             modelBuilder.Entity("ToDo.Web.Data.Priority", b =>
@@ -291,8 +313,11 @@ namespace ToDo.Web.Migrations
                 {
                     b.HasOne("ToDo.Web.Data.AppUser", "AppUser")
                         .WithMany()
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("AppUserId");
+
+                    b.HasOne("ToDo.Web.Data.OldUser", "OldUser")
+                        .WithMany()
+                        .HasForeignKey("OldUserId");
 
                     b.HasOne("ToDo.Web.Data.Priority", "Priority")
                         .WithMany()

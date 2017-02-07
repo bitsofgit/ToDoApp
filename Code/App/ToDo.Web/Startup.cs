@@ -4,8 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,28 +31,85 @@ namespace ToDo.Web
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
-            Configuration = builder.Build();
+            _config = builder.Build();
+            _env = env;
         }
 
-        public IConfigurationRoot Configuration { get; }
+        private IConfigurationRoot _config { get; }
+        private IHostingEnvironment _env { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        // To setup dependency injection
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton(_config);
             //const string ConnString = @"Server=tcp:ard.database.windows.net,1433;Data Source=ard.database.windows.net;Initial Catalog=ToDo;Persist Security Info=False;User ID=ard;Password=Akhil1012;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
             services.AddScoped<IItemRepository, ItemRepository>();
             //services.AddScoped((_) => new ToDoContext(Configuration["Data:ToDoContext"]));
+            services.AddTransient<IdentityInitializer>();
 
-            services.AddDbContext<ToDoContext>(options => options.UseSqlServer(Configuration["Data:ToDoContext"]));
+            services.AddDbContext<ToDoContext>(options => options.UseSqlServer(_config["Data:ToDoContext"]));
 
             // Add caching
             services.AddMemoryCache();
 
+            // Add Identity
+            services.AddIdentity<AppUser, IdentityRole>()
+                .AddEntityFrameworkStores<ToDoContext>();
+
+            services.Configure<IdentityOptions>(config =>
+            {
+                config.Cookies.ApplicationCookie.Events = new CookieAuthenticationEvents()
+                {
+                    OnRedirectToLogin = (ctx) =>
+                    {
+                        if (ctx.Request.Path.StartsWithSegments("/api") && ctx.Response.StatusCode == 200)
+                        {
+                            ctx.Response.StatusCode = 401;
+                        }
+                        return Task.CompletedTask;
+                    },
+                    OnRedirectToAccessDenied = (ctx) =>
+                    {
+                        if (ctx.Request.Path.StartsWithSegments("/api") && ctx.Response.StatusCode == 200)
+                        {
+                            ctx.Response.StatusCode = 403;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
+                config.Cookies.ApplicationCookie.CookieName = "ToDoCookie";
+                config.Cookies.ApplicationCookie.ExpireTimeSpan = TimeSpan.FromHours(2);
+                
+            });
+
+            // Add CORS
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllAllow", cfg =>
+                {
+                    cfg.AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+
+                options.AddPolicy("OnlyGetAllow", cfg =>
+                {
+                    cfg.AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .WithMethods("GET");
+                });
+            });
+
             // Add framework services.
             services.AddMvc(options =>
             {
-                options.Filters.Add(typeof(SampleActionFilter));
+                if (!_env.IsProduction())
+                {
+                    options.SslPort = 44388;
+                }
+                options.Filters.Add(typeof(SampleActionFilter)); // global filter
+                options.Filters.Add(new RequireHttpsAttribute());
             })
             .AddJsonOptions(opt =>
                 {
@@ -59,14 +119,15 @@ namespace ToDo.Web
 
                     // make output json indented
                     opt.SerializerSettings.Formatting = Formatting.Indented;
+                    
                 });
 
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        // To setup how request is being handled
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IdentityInitializer identitySeeder)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            loggerFactory.AddConsole(_config.GetSection("Logging"));
             loggerFactory.AddDebug();
 
             app.Use(async (context, next) =>
@@ -82,17 +143,20 @@ namespace ToDo.Web
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
+
+            app.UseIdentity();
             
             app.UseMvcWithDefaultRoute();
 
             InitializeAutoMapper();
+
+            identitySeeder.Seed().Wait();
         }
 
         private void InitializeAutoMapper()
         {
             AutoMapper.Mapper.Initialize(config => {
                 config.CreateMap<Item, ItemVM>().ReverseMap();
-                config.CreateMap<User, UserVM>().ReverseMap();
                 config.CreateMap<SubItem, SubItemVM>().ReverseMap();
                 config.CreateMap<Priority, PriorityVM>().ReverseMap();
 

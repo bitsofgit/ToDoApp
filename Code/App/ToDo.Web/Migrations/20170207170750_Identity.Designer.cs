@@ -8,9 +8,10 @@ using ToDo.Web.Data;
 namespace ToDo.Web.Migrations
 {
     [DbContext(typeof(ToDoContext))]
-    partial class ToDoContextModelSnapshot : ModelSnapshot
+    [Migration("20170207170750_Identity")]
+    partial class Identity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.0-rtm-22752")
@@ -68,9 +69,6 @@ namespace ToDo.Web.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired();
-
                     b.Property<string>("Email")
                         .HasMaxLength(256);
 
@@ -109,8 +107,6 @@ namespace ToDo.Web.Migrations
                         .HasName("UserNameIndex");
 
                     b.ToTable("AspNetUsers");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityUserClaim<string>", b =>
@@ -183,9 +179,6 @@ namespace ToDo.Web.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("AppUserId")
-                        .IsRequired();
-
                     b.Property<string>("Class");
 
                     b.Property<DateTime?>("CompletedOn");
@@ -196,19 +189,39 @@ namespace ToDo.Web.Migrations
 
                     b.Property<DateTime?>("DueBy");
 
+                    b.Property<int?>("OldUserId");
+
                     b.Property<int?>("PriorityId");
 
                     b.Property<int>("Status");
 
                     b.Property<DateTime?>("UpdatedDate");
 
+                    b.Property<int>("UserId");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("AppUserId");
+                    b.HasIndex("OldUserId");
 
                     b.HasIndex("PriorityId");
 
                     b.ToTable("Items");
+                });
+
+            modelBuilder.Entity("ToDo.Web.Data.OldUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<string>("EmailId");
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OldUsers");
                 });
 
             modelBuilder.Entity("ToDo.Web.Data.Priority", b =>
@@ -237,17 +250,6 @@ namespace ToDo.Web.Migrations
                     b.HasIndex("ItemId");
 
                     b.ToTable("SubItems");
-                });
-
-            modelBuilder.Entity("ToDo.Web.Data.AppUser", b =>
-                {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityUser");
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.ToTable("AppUser");
-
-                    b.HasDiscriminator().HasValue("AppUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityRoleClaim<string>", b =>
@@ -289,10 +291,9 @@ namespace ToDo.Web.Migrations
 
             modelBuilder.Entity("ToDo.Web.Data.Item", b =>
                 {
-                    b.HasOne("ToDo.Web.Data.AppUser", "AppUser")
+                    b.HasOne("ToDo.Web.Data.OldUser", "OldUser")
                         .WithMany()
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("OldUserId");
 
                     b.HasOne("ToDo.Web.Data.Priority", "Priority")
                         .WithMany()
