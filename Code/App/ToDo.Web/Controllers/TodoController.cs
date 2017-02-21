@@ -15,6 +15,7 @@ using ToDo.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
+using ToDo.Web.Helpers;
 
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
@@ -30,31 +31,19 @@ namespace ToDo.Web.Controllers
         private readonly IItemRepository _repo;
         private IMemoryCache _memCache;
         private ILogger _logger;
-        private UserManager<AppUser> _userMgr;
 
-        public TodoController(IItemRepository repo, IMemoryCache memCache, ILogger<TodoController> logger, UserManager<AppUser> userMgr)
+        public TodoController(IItemRepository repo, IMemoryCache memCache, ILogger<TodoController> logger)
         {
-            if (repo == null)
-                throw new NullReferenceException("repo is null");
+            repo.ExtIfNullThrowException("repo is null");
             _repo = repo;
 
-            if (memCache == null)
-                throw new NullReferenceException("memCache is null");
+            memCache.ExtIfNullThrowException("memCache is null");
             _memCache = memCache;
 
-            if (logger == null)
-                throw new NullReferenceException("logger is null");
+            logger.ExtIfNullThrowException("logger is null");
             _logger = logger;
-
-            if (userMgr == null)
-                throw new NullReferenceException("userMgr is null");
-            _userMgr = userMgr;
         }
-        private async Task<AppUser> GetAppUser()
-        {
-            return await _userMgr.FindByNameAsync(this.User.Identity.Name);
-        }
-
+        
         // GET api/Todo/GetPriority
         [HttpGet]
         [Route("GetPriority")]
@@ -88,17 +77,13 @@ namespace ToDo.Web.Controllers
         }
 
         // GET api/Todo
+        [Authorize(Policy = "SuperUsers")] // Let's say this method can only be called by a super user
         [HttpGet]
         public async Task<JsonResult> Get()
         {
             try
             {
-                var appUser = await GetAppUser();
-                if (appUser == null)
-                {
-                    Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                    return Json(new { message = "Unable to get user" });
-                }
+                var appUser = (AppUser)RouteData.Values["AppUser"];
 
                 var items = _repo.GetAllItems(appUser.Id);
                 var results = Mapper.Map<IEnumerable<ItemVM>>(items);
@@ -106,7 +91,7 @@ namespace ToDo.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error while getting priority: {ex}");
+                _logger.LogError($"Error while getting all tasks: {ex}");
                 throw;
             }
         }
@@ -117,13 +102,8 @@ namespace ToDo.Web.Controllers
         {
             try
             {
-                var appUser = await GetAppUser();
-                if (appUser == null)
-                {
-                    Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                    return Json(new { message = "Unable to get user" });
-                }
-
+                var appUser = (AppUser)RouteData.Values["AppUser"];
+               
                 var item = _repo.GetItemById(appUser.Id, itemId);
                 var result = Mapper.Map<ItemVM>(item);
                 return Json(result);
@@ -142,13 +122,8 @@ namespace ToDo.Web.Controllers
         {
             try
             {
-                var appUser = await GetAppUser();
-                if (appUser == null)
-                {
-                    Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                    return Json(new { message = "Unable to get user" });
-                }
-
+                var appUser = (AppUser)RouteData.Values["AppUser"];
+                
                 Item item = Mapper.Map<Item>(vm);
                 var addedItem = _repo.AddItem(appUser.Id, item);
                 if (addedItem == null)
@@ -177,13 +152,8 @@ namespace ToDo.Web.Controllers
         {
             try
             {
-                var appUser = await GetAppUser();
-                if (appUser == null)
-                {
-                    Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                    return Json(new { message = "Unable to get user" });
-                }
-
+                var appUser = (AppUser)RouteData.Values["AppUser"];
+               
                 Item newItem = Mapper.Map<Item>(vm);
 
                 var updatedItem = _repo.UpdateItem(appUser.Id, itemId, newItem);
@@ -225,13 +195,8 @@ namespace ToDo.Web.Controllers
         {
             try
             {
-                var appUser = await GetAppUser();
-                if (appUser == null)
-                {
-                    Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                    return Json(new { message = "Unable to get user" });
-                }
-
+                var appUser = (AppUser)RouteData.Values["AppUser"];
+                
                 if (_repo.DeleteItem(appUser.Id, itemId))
                 {
                     Response.StatusCode = (int)HttpStatusCode.OK;

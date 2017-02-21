@@ -4,20 +4,26 @@ import {CanActivate, Route, Router, ActivatedRouteSnapshot, RouterStateSnapshot}
 import {Observable} from "rxjs/Observable";
 import 'rxjs/add/observable/throw';
 
+import {LoginService} from "../../Login/Services/LoginService";
+import {LoggerService} from "../../Shared/Services/LoggerService";
+
+
 @Injectable()
 export class CanActivateAuthGuard implements CanActivate{
-    constructor(private _router:Router) {
-        console.log("constructing CanActivateAuthGuard");
+    constructor(private _router:Router, private _loginService:LoginService, private _logger: LoggerService) {
+        this._logger.log("constructing CanActivateAuthGuard");
     }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-        console.log("Inside canActivate route guard");
+        this._logger.log("Inside canActivate route guard")
 
-        // if user is logged in
-        return true;
-        //else go to login page
-        //this._router.navigate(['/login'], { queryParams: { redirectsTo: state.url } });
-        //return false;
-
+        if (this._loginService.isAuthenticated()) {
+            this._logger.log("User is authenticated. Allowing to move forward.")
+            return true;
+        } else {
+            this._logger.log("User is not authenticated. Redirecting to Login.")
+            this._router.navigate(['/login']);
+            return false;
+        }
     }
 }

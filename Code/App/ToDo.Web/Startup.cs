@@ -13,12 +13,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using ToDo.Web.Data;
 using ToDo.Web.Filters;
 using ToDo.Web.Repository;
 using ToDo.Web.ViewModels;
+using System.Text;
+using ToDo.Web.Helpers;
 
 namespace ToDo.Web
 {
@@ -45,8 +48,8 @@ namespace ToDo.Web
             //const string ConnString = @"Server=tcp:ard.database.windows.net,1433;Data Source=ard.database.windows.net;Initial Catalog=ToDo;Persist Security Info=False;User ID=ard;Password=Akhil1012;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
             services.AddScoped<IItemRepository, ItemRepository>();
-            //services.AddScoped((_) => new ToDoContext(Configuration["Data:ToDoContext"]));
             services.AddTransient<IdentityInitializer>();
+            services.AddTransient<JWTHelper>();
 
             services.AddDbContext<ToDoContext>(options => options.UseSqlServer(_config["Data:ToDoContext"]));
 
@@ -101,6 +104,12 @@ namespace ToDo.Web
                 });
             });
 
+            // Add Authorization Policies
+            services.AddAuthorization(config =>
+            {
+                config.AddPolicy("SuperUsers", p => p.RequireClaim("SuperUser", "True"));
+            });
+
             // Add framework services.
             services.AddMvc(options =>
             {
@@ -108,7 +117,10 @@ namespace ToDo.Web
                 {
                     options.SslPort = 44388;
                 }
-                options.Filters.Add(typeof(SampleActionFilter)); // global filter
+
+                // global filters
+                options.Filters.Add(typeof(TimingActionFilter)); 
+                options.Filters.Add(typeof(AuthFilter));
                 options.Filters.Add(new RequireHttpsAttribute());
             })
             .AddJsonOptions(opt =>
@@ -145,6 +157,20 @@ namespace ToDo.Web
             app.UseStaticFiles();
 
             app.UseIdentity();
+
+            app.UseJwtBearerAuthentication(new JwtBearerOptions()
+            {
+                AutomaticAuthenticate = true,
+                AutomaticChallenge = true,
+                TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidIssuer = _config["Tokens:Issuer"],
+                    ValidAudience = _config["Tokens:Audience"],
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Tokens:Key"])),
+                    ValidateLifetime = true
+                }
+            });
             
             app.UseMvcWithDefaultRoute();
 

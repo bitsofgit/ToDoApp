@@ -2,6 +2,7 @@ import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 
 import {IItem, ISubItem} from './Interfaces';
 import {ItemService} from './Services/ItemService';
+import {LoggerService} from "../Shared/Services/LoggerService";
 
 
 @Component({
@@ -19,7 +20,7 @@ export class SubItemComponent implements OnInit {
     subItemDescription: string;
     get diagnostic() { return JSON.stringify(this.item) };
 
-    constructor(private _itemService: ItemService) { }
+    constructor(private _itemService: ItemService, private _logger:LoggerService) { }
 
     ngOnInit() { }
 
@@ -34,7 +35,7 @@ export class SubItemComponent implements OnInit {
                 this.subItemToBeDeleted = null;
                 this.notifySubItemDelete.emit(data);
             },
-            error => console.log(error));
+            error => this._logger.log(error));
     }
 
     CancelDelete(): void {
@@ -54,7 +55,7 @@ export class SubItemComponent implements OnInit {
                         this.showAddSubItem = false;
                         this.showAddSubItemId = null;
                     },
-                    error => console.log(error));
+                    error => this._logger.log(error));
         } else {
             throw new Error("Description for a subitem is required.");
         }

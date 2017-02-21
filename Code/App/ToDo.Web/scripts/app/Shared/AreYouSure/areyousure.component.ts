@@ -3,7 +3,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 @Component({
     //moduleId: module.id,
     selector: '<app-areyousure>',
-    templateUrl: './app/AreYouSure/areyousure.component.html'
+    templateUrl: './app/Shared/AreYouSure/areyousure.component.html'
 })
 export class AreYouSureComponent implements OnInit {
     constructor() { }

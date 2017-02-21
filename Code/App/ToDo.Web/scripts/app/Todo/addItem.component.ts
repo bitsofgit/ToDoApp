@@ -4,6 +4,7 @@ import {Router, ActivatedRoute} from '@angular/router';
 
 import {IItem, IPriority} from './Interfaces';
 import {ItemService} from './Services/ItemService';
+import {LoggerService} from '../Shared/Services/LoggerService';
 
 @Component({
     //moduleId: module.id,
@@ -19,19 +20,20 @@ export class AddItemComponent implements OnInit {
 
     constructor(private _fb: FormBuilder, private _itemService: ItemService,
         private _router: Router,
-        private _route: ActivatedRoute) {
-        console.log("constructing AddItemComponent");
+        private _route: ActivatedRoute,
+    private _logger:LoggerService) {
+        this._logger.log("constructing AddItemComponent");
     }
 
     ngOnInit() {
-        console.log("in ngoninit() of AddItemComponent.")
+        this._logger.log("in ngoninit() of AddItemComponent.")
         this.addedItem = this.getNewItem();
         //this.priorities = this._itemService.getCachedPriorities();
         if (!this.priorities) {
             this._itemService.getPriorities()
                 .subscribe(
                 data => this.priorities = data,
-                error => console.log(error));
+                error => this._logger.log(error));
         }
         // The below code is for making data driven forms work
         // this.aForm = this._fb.group({
@@ -44,7 +46,7 @@ export class AddItemComponent implements OnInit {
     }
 
     ngOnDestroy() {
-        console.log("Destroying AddItemComponent.");
+        this._logger.log("Destroying AddItemComponent.");
 
     }
 
@@ -55,7 +57,7 @@ export class AddItemComponent implements OnInit {
                 this.addedItem = this.getNewItem();
                 this.goToList();
             },
-            error => console.log(error));
+            error => this._logger.log(error));
     }
 
     Cancel(): void {

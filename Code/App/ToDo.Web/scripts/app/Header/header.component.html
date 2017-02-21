@@ -1,4 +1,13 @@
 <div>
     <h1>App</h1>
+    <a *ngIf="!IsAuthenticated" (click)="Login()">Login</a>
+    <a *ngIf="IsAuthenticated" (click)="Logout()">Logout</a>
+    | <a (click)="ShowHideLogs()">{{showLogs?'Hide Logs':'Show Logs'}}</a>
+
+    <div *ngIf="showLogs">
+        <ul>
+            <li *ngFor="let item of logs">{{item}}</li>
+        </ul>
+    </div>
     <hr/>
 </div>

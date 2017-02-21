@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using ToDo.Web.Data;
+using ToDo.Web.Helpers;
 
 namespace ToDo.Web.Repository
 {
@@ -28,12 +29,10 @@ namespace ToDo.Web.Repository
 
         public ItemRepository(ToDoContext ctx, ILogger<ItemRepository> logger)
         {
-            if (ctx == null)
-                throw new NullReferenceException("ctx is null");
+            ctx.ExtIfNullThrowException("ctx is null");
             _ctx = ctx;
 
-            if (logger == null)
-                throw new NullReferenceException("logger is null");
+            ctx.ExtIfNullThrowException("logger is null");
             _logger = logger;
         }
 
@@ -44,8 +43,7 @@ namespace ToDo.Web.Repository
 
         public IEnumerable<Item> GetAllItems(string appUserId)
         {
-            if (string.IsNullOrWhiteSpace(appUserId))
-                throw new NullReferenceException("appUserId can not be null.");
+            appUserId.ExtIfNullorWhitespaceThrowException("appUserId can not be null.");
 
             var results = _ctx.Items
                 .Where(i => i.AppUserId == appUserId)
@@ -57,8 +55,7 @@ namespace ToDo.Web.Repository
 
         public Item GetItemById(string appUserId, int itemId)
         {
-            if (string.IsNullOrWhiteSpace(appUserId))
-                throw new NullReferenceException("appUserId can not be null.");
+            appUserId.ExtIfNullorWhitespaceThrowException("appUserId can not be null.");
 
             return _ctx.Items
                 .Include(i => i.SubItems)
@@ -69,9 +66,8 @@ namespace ToDo.Web.Repository
         {
             try
             {
-                if(string.IsNullOrWhiteSpace(appUserId))
-                    throw new NullReferenceException("appUserId can not be null or empty.");
-
+                appUserId.ExtIfNullorWhitespaceThrowException("appUserId can not be null.");
+                
                 newItem.CreatedDate = DateTime.Now;
                 newItem.AppUserId = appUserId;
                 if (ValidateItem(newItem))
@@ -92,8 +88,7 @@ namespace ToDo.Web.Repository
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(appUserId))
-                    throw new NullReferenceException("appUserId can not be null or empty.");
+                appUserId.ExtIfNullorWhitespaceThrowException("appUserId can not be null.");
 
                 if (newItem == null)
                     return null;
@@ -137,9 +132,8 @@ namespace ToDo.Web.Repository
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(appUserId))
-                    throw new NullReferenceException("appUserId can not be null or empty.");
-
+                appUserId.ExtIfNullorWhitespaceThrowException("appUserId can not be null.");
+                
                 var item = GetItemById(appUserId, itemId);
                 if (item == null) return true;
 
@@ -161,9 +155,8 @@ namespace ToDo.Web.Repository
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(appUserId))
-                    throw new NullReferenceException("appUserId can not be null or empty.");
-
+                appUserId.ExtIfNullorWhitespaceThrowException("appUserId can not be null.");
+                
                 var subItem = GetSubItemById(appUserId, subItemId);
                 if (subItem == null)
                     return true;
@@ -180,9 +173,8 @@ namespace ToDo.Web.Repository
 
         public SubItem GetSubItemById(string appUserId, int subItemId)
         {
-            if (string.IsNullOrWhiteSpace(appUserId))
-                throw new NullReferenceException("appUserId can not be null or empty.");
-
+            appUserId.ExtIfNullorWhitespaceThrowException("appUserId can not be null.");
+            
             var subItem = _ctx.SubItems.FirstOrDefault(si => si.Id == subItemId);
             if (subItem == null) return null;
 
@@ -197,20 +189,28 @@ namespace ToDo.Web.Repository
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(appUserId))
-                    throw new NullReferenceException("appUserId can not be null or empty.");
+                appUserId.ExtIfNullorWhitespaceThrowException("appUserId can not be null.");
 
-                if (ValidateSubItem(subItem))
+                // check if subitem is not null
+                if(subItem == null)
+                    throw new ArgumentNullException("sub item can not be null.");
+
+                // check that subitem's item still exists and it belongs to user
+                var item = _ctx.Items.FirstOrDefault(i => i.Id == subItem.ItemId);
+                if(item != null && item.AppUserId == appUserId)
                 {
                     _ctx.SubItems.Add(subItem);
                     return SaveAll() ? subItem : null;
                 }
-                return null;
+                else
+                {
+                    throw new Exception("Invalid subitem.");
+                }
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Error while adding sub Item: {ex}");
-                return null;
+                throw;
             }
         }
 

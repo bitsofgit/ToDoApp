@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using ToDo.Web.Filters;
+using ToDo.Web.Helpers;
+
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -25,26 +27,14 @@ namespace ToDo.Web.Controllers
     {
         private ILogger<SubItemController> _logger;
         private readonly IItemRepository _repo;
-        private UserManager<AppUser> _userMgr;
 
-        public SubItemController(IItemRepository repo, ILogger<SubItemController> logger, UserManager<AppUser> userMgr )
+        public SubItemController(IItemRepository repo, ILogger<SubItemController> logger)
         {
-            if (repo == null)
-                throw new NullReferenceException("repo is null");
+           repo.ExtIfNullThrowException("repo is null");
             _repo = repo;
 
-            if (logger == null)
-                throw new NullReferenceException("logger is null");
+            logger.ExtIfNullThrowException("logger is null");
             _logger = logger;
-
-            if (userMgr == null)
-                throw new NullReferenceException("userMgr is null");
-            _userMgr = userMgr;
-        }
-
-        private async Task<AppUser> GetAppUser()
-        {
-            return await _userMgr.FindByNameAsync(this.User.Identity.Name);
         }
 
         // DELETE api/values/5
@@ -53,12 +43,7 @@ namespace ToDo.Web.Controllers
         {
             try
             {
-                var appUser = await GetAppUser() ;
-                if (appUser == null)
-                {
-                    Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                    return Json(new { message = "Unable to get user" });
-                }
+                var appUser = (AppUser)RouteData.Values["AppUser"];
 
                 if (_repo.DeleteSubItem(appUser.Id, id))
                 {
@@ -83,12 +68,7 @@ namespace ToDo.Web.Controllers
         {
             try
             {
-                var appUser = await GetAppUser();
-                if (appUser == null)
-                {
-                    Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                    return Json(new { message = "Unable to get user" });
-                }
+                var appUser = (AppUser)RouteData.Values["AppUser"];
 
                 SubItem subItem = Mapper.Map<SubItem>(vm);
 

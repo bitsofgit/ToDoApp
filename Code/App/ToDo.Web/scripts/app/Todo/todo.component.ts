@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, OnChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import {IItem, ISubItem, IPriority} from './Interfaces';
 import {ItemService} from './Services/ItemService';
+import {LoggerService} from '../Shared/Services/LoggerService';
 
 @Component({
     // moduleId: module.id,
@@ -18,7 +19,8 @@ export class TodoComponent implements OnInit, OnDestroy, OnChanges {
     get diagnostic() { return JSON.stringify(this.priorities); }
 
     constructor(private _itemService: ItemService,
-                private _router: Router) { }
+        private _router: Router,
+    private _logger:LoggerService) { }
 
     // Application Hooks 
     ngOnInit() {
@@ -27,11 +29,11 @@ export class TodoComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     ngOnDestroy(): void {
-        console.log("In OnDestroy");
+        this._logger.log("In OnDestroy");
     }
 
     ngOnChanges(): void {
-        console.log("In OnChanges");
+        this._logger.log("In OnChanges");
     }
     // Application Hooks
 
@@ -68,10 +70,10 @@ export class TodoComponent implements OnInit, OnDestroy, OnChanges {
                                 this.priorities = dt;
                                 this.updatePriorities();
                             },
-                            error => console.log(error));
+                            error => this._logger.log(error));
                 }
             },
-            error => console.log(error));
+            error => this._logger.log(error));
     }
 
     getItemById(id: number): IItem {
@@ -101,7 +103,7 @@ export class TodoComponent implements OnInit, OnDestroy, OnChanges {
         this._itemService.updateItem(id, item)
             .subscribe(
             data => { this.InitializeItems(); },
-            error => console.log(error));
+            error => this._logger.log(error));
     }
 
     MarkAsDone(id: number): void {
@@ -119,9 +121,9 @@ export class TodoComponent implements OnInit, OnDestroy, OnChanges {
         this._itemService.deleteItem(id)
             .subscribe(
             data => this.InitializeItems(),
-            error => console.log(error)
+            error => this._logger.log(error)
             );
-        console.log("Item " + id + " deleted successfully");
+        this._logger.log("Item " + id + " deleted successfully");
         this.itemToBeDeleted = null;
     }
 

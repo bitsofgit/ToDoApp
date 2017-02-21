@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System.Security.Claims;
+using ToDo.Web.Helpers;
 
 namespace ToDo.Web.Data
 {
@@ -15,12 +16,10 @@ namespace ToDo.Web.Data
 
         public IdentityInitializer(UserManager<AppUser> userMgr, RoleManager<IdentityRole> roleMgr)
         {
-            if(userMgr == null)
-                throw new NullReferenceException("userMgr is null");
+            userMgr.ExtIfNullThrowException("userMgr is null");
             _userMgr = userMgr;
 
-            if (roleMgr == null)
-                throw new NullReferenceException("roleMgr is null");
+            roleMgr.ExtIfNullThrowException("roleMgr is null");
             _roleMgr = roleMgr;
         }
 

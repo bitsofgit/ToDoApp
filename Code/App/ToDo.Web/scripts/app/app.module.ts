@@ -9,6 +9,13 @@ import { HeaderComponent} from './Header/header.component';
 
 import {AppRoutingModule, routableComponents} from './app-routing.module';
 
+import { SharedModule } from './Shared/shared.module';
+import {LoginModule} from './Login/login.module';
+
+import { LoginService } from "./Login/Services/LoginService";
+import { ExtensionService } from "./Shared/Services/ExtensionService";
+import { LoggerService } from "./Shared/Services/LoggerService";
+
 @NgModule({
     declarations: [
         AppComponent,
@@ -19,10 +26,12 @@ import {AppRoutingModule, routableComponents} from './app-routing.module';
         BrowserModule,
         FormsModule,
         HttpModule,
-        AppRoutingModule
+        AppRoutingModule,
+        SharedModule,
+        LoginModule
     ],
     bootstrap: [AppComponent],
-    providers: [FormBuilder]
+    providers: [FormBuilder, ExtensionService, LoginService, LoggerService ]
 })
 
 export class AppModule { }
