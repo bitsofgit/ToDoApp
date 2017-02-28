@@ -31,7 +31,7 @@ import { LoggerService } from "./Shared/Services/LoggerService";
         LoginModule
     ],
     bootstrap: [AppComponent],
-    providers: [FormBuilder, ExtensionService, LoginService, LoggerService ]
+    providers: [FormBuilder, LoginService, ExtensionService, LoggerService ]
 })
 
 export class AppModule { }

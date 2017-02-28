@@ -58,7 +58,7 @@ export class ItemService {
     addItem(item: IItem): Observable<IItem> {
         this._logger.log("calling itemservice.addItem");
 
-        return this._http.post(ITEM_URL, item)
+        return this._http.post(ITEM_URL, item, this._loginService.getJWTHeaderOption())
             .map(this.sendJsonResponse)
             .catch(this.handleError);
     }

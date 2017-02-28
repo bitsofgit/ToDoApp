@@ -23,6 +23,7 @@ export class HeaderComponent implements OnInit {
 
     Logout(): void {
         this._loginService.logout();
+        this.IsAuthenticated = false;
         this.goToList();
     }
 
