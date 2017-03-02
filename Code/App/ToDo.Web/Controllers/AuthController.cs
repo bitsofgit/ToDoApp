@@ -15,9 +15,11 @@ using ToDo.Web.Data;
 using ToDo.Web.Filters;
 using ToDo.Web.Helpers;
 using ToDo.Web.ViewModels;
+using Microsoft.AspNetCore.Cors;
 
 namespace ToDo.Web.Controllers
 {
+    [EnableCors("AllAllow")]
     public class AuthController : Controller
     {
         private ToDoContext _context;

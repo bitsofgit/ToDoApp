@@ -1,0 +1,45 @@
+
+
+<h1>
+    Add Task
+</h1>
+
+<div class="col-md-offset-1 col-md-10">
+    <form (ngSubmit)="onSubmit()" #addForm="ngForm">
+        <!--{{diagnostic}}-->
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label for="Description">Description</label>
+                <input type="text " class="form-control " required [(ngModel)]="addedItem.Description " name="Description" #Description>
+            </div>
+
+            <div class="form-group col-md-2">
+                <label for="Priority">Priority</label>
+                <select class="form-control" required [(ngModel)]="addedItem.PriorityId" name="Priority">
+                    <option *ngFor="let p of priorities" [value]="p.Id">{{p.PriorityLevel}}</option>
+                </select>
+            </div>
+
+            <div class="form-group col-md-2">
+                <label for="Class">Class</label>
+                <input type="string" class="form-control " [(ngModel)]="addedItem.Class" name="Class">
+            </div>
+
+            <div class="form-group col-md-2">
+                <label for="DueBy">Due By</label>
+                <input type="date" class="form-control" [(ngModel)]="addedItem.DueBy" name="DueBy">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-xs btn-primary" [disabled]="!addForm.form.valid"><i class="fa fa-plus"></i> Add Task</button>
+                <button class="btn btn-xs btn-danger" (click)="Cancel()"><i class="fa fa-minus"></i> Cancel</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+

@@ -1,0 +1,7 @@
+﻿<h1>Login</h1>
+<input type="text" required placeholder="Enter Username..." [(ngModel)]="creds.Username"/>
+<br/>
+<input type="password" required placeholder="Enter Password..." [(ngModel)]="creds.Password" />
+<br />
+<span *ngIf="errorMessage"  class="label label-info">{{errorMessage}}</span>
+<a *ngIf="creds.Username.length > 0 && creds.Password.length > 0" (click)="Login()">Login</a>
