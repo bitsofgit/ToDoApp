@@ -23,25 +23,32 @@ export class LoginComponent implements OnInit {
     }
 
     getNewCreds(): ICredential {
+        this.errorMsg = "";
         return { Username: "", Password: "" };
     }
 
     Login(): void {
 
         this._loginService.login(this.creds)
-            .toPromise()
-            .then(data => {
-                if (this._loginService.isAuthenticated()) {
+            .subscribe(
+                data => {
                     this.creds = this.getNewCreds();
                     this.goToList();
-                } else {
+                },
+                error => {
                     this.errorMsg = "Login Failure.";
+                    this._logger.log(this.errorMsg);
                 }
-            });
+            );
     }
 
     goToList(): void {
         this._router.navigate(['/todo']);
+    }
+
+    Cancel(): void {
+        this.creds = this.getNewCreds();
+        
     }
 
 }
