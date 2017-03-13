@@ -1,29 +1,18 @@
 ﻿<html>
 <head>
     <base href="/">
-    <title>To Do List</title>
+    <title>To Do List - Web API</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="libs/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="styles.css">
-
-    <!-- Polyfill(s) for older browsers -->
-    <script src="libs/core-js/client/shim.min.js"></script>
-
-    <script src="libs/zone.js/dist/zone.js"></script>
-    <script src="libs/reflect-metadata/Reflect.js"></script>
-    <script src="libs/systemjs/dist/system.src.js"></script>
     <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
-    <script src="libs/bootstrap/dist/js/bootstrap.min.js"></script>
-
-    <script src="systemjs.config.js"></script>
-    <script>
-      System.import('app').catch(function(err){ console.log(err); });
-    </script>
 </head>
 
 <body>
-    <my-app>Loading...</my-app>
+    <h1>To Do List - Web API</h1>
+    <span>Try these APIs...</span>
+    <ul>
+        <li><a href="/api/todo">GET ALL</a></li>
+        <li><a href="/api/todo/1">GET ONE</a></li>
+    </ul>
 </body>
 </html>
