@@ -16,7 +16,7 @@ export class TodoComponent implements OnInit, OnDestroy, OnChanges {
     //itemToBeEdited: number;
     showDetailsForId: number;
     priorities: IPriority[];
-    get diagnostic() { return JSON.stringify(this.priorities); }
+    //get diagnostic() { return JSON.stringify(this.items.length); }
 
     constructor(private _itemService: ItemService,
         private _router: Router,

@@ -77,7 +77,6 @@ namespace ToDo.Web.Controllers
         }
 
         // GET api/Todo
-        [Authorize(Policy = "SuperUsers")] // Let's say this method can only be called by a super user
         [HttpGet]
         public async Task<JsonResult> Get()
         {
@@ -190,6 +189,7 @@ namespace ToDo.Web.Controllers
         }
 
         // DELETE api/Todo/5
+        [Authorize(Policy = "SuperUsers")] // Let's say this method can only be called by a super user
         [HttpDelete("{itemId}")]
         public async Task<JsonResult> Delete(int itemId)
         {

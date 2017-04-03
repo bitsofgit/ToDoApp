@@ -13,5 +13,7 @@ namespace ToDo.Web.ViewModels
 
         [Required]
         public string Password { get; set; }
+
+        public string Email { get; set; }
     }
 }

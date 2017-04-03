@@ -1,9 +1,9 @@
 ﻿<h1>
-    Login
+    Register
 </h1>
 
 <div class="col-md-offset-1 col-md-10">
-    <form (ngSubmit)="Login()" #loginForm="ngForm">
+    <form (ngSubmit)="Register()" #registerForm="ngForm">
         <!--{{diagnostic}}-->
         <div class="row">
             <div class="form-group col-md-3">
@@ -15,13 +15,17 @@
                 <label for="Password">Password</label>
                 <input type="password" class="form-control"  required [(ngModel)]="creds.Password" name="Password">
             </div>
+
+            <div class="form-group col-md-3">
+                <label for="Email">Email</label>
+                <input type="email" class="form-control"  required [(ngModel)]="creds.Email" name="Email">
+            </div>
         </div>
 
         <div class="row">
-            <div class="col-md-6">
-                <button type="submit" class="btn btn-xs btn-primary" [disabled]="!loginForm.form.valid"><i class="fa fa-sign-in"></i> Login</button>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-xs btn-primary" [disabled]="!registerForm.form.valid"><i class="fa fa-sign-in"></i> Register</button>
                 <button class="btn btn-xs btn-danger" (click)="Cancel()"><i class="fa fa-minus"></i> Cancel</button>
-                <button class="btn btn-xs btn-primary" (click)="Register()"><i class="fa fa-plus"></i> Register</button>
             </div>
         </div>
         <br/>

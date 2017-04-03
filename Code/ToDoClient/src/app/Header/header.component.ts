@@ -37,7 +37,7 @@ export class HeaderComponent implements OnInit {
 
     ShowHideLogs(): void {
         // get logs
-        if(this.showLogs == false)
+        //if(this.showLogs == false)
             this.logs = this._logger.logs;
 
         // flip flag

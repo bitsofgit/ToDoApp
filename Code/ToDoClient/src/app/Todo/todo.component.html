@@ -14,7 +14,7 @@
 <!--<div>
     {{diagnostic}}
 </div>-->
-<div class="row">
+<div class="row" *ngIf="items.length > 0">
     <div class="col-md-offset-1 col-md-3">
         <div class='panel panel-info'>
             <div class='panel-heading'>
@@ -111,4 +111,8 @@
             </div>
         </div>
     </div>
+</div>
+
+<div class="well well-lg col-md-offset-1 col-md-3" *ngIf="items.length == 0">
+    You dont have any items. Add some!!
 </div>

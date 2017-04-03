@@ -73,7 +73,7 @@ namespace ToDo.Web.Controllers
             return BadRequest("Failed to login.");
         }
 
-        // token auth
+        // token auth - login
         [HttpPost("api/auth/token")]
         [ValidateModel]
         public async Task<IActionResult> CreateToken([FromBody] CredentialModel creds)
@@ -122,6 +122,61 @@ namespace ToDo.Web.Controllers
             }
 
             return BadRequest("Failed to generate token.");
+        }
+
+        // token auth - register
+        [HttpPost("api/auth/register")]
+        [ValidateModel]
+        public async Task<IActionResult> Register([FromBody] CredentialModel creds)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(creds.UserName) || string.IsNullOrWhiteSpace(creds.Password) || string.IsNullOrWhiteSpace(creds.Email))
+                {
+                    return BadRequest("Username or Password or Email can't be null, empty or have whitespace");
+                }
+
+                var user = await _userMgr.FindByNameAsync(creds.UserName);
+                if (user == null)
+                {
+                    if (ValidatePassword(creds.Password) && ValidateEmail(creds.Email))
+                    {
+                        var appuser = new AppUser()
+                        {
+                            UserName = creds.UserName,
+                            Email = creds.Email,
+                            CreatedDate = DateTime.Now
+                        };
+
+                        var userResult = await _userMgr.CreateAsync(appuser, creds.Password);
+
+                        if (userResult.Succeeded)
+                            return Ok(new {Message = "Registration Successful" });
+                        else
+                            return BadRequest("Unable to process request.");
+                    }
+                    else
+                        return BadRequest("Password doesn't match criteria.");
+                }
+                else
+                    return BadRequest("Unable to process request.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Unable to register user: {ex}");
+            }
+
+            return BadRequest("Unable to register user.");
+        }
+
+        private bool ValidateEmail(string email)
+        {
+            return true;
+        }
+
+        private bool ValidatePassword(string pswd)
+        {
+            return true;
         }
     }
 }

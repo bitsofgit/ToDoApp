@@ -3,5 +3,6 @@
 export interface ICredential {
     Username: string;
     Password: string;
+    Email: string;
 }
 

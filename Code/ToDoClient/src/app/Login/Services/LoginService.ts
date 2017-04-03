@@ -36,6 +36,19 @@ export class LoginService {
             .catch(this.handleError);
     }
 
+    public register(creds: ICredential): Observable<Response> {
+        this._logger.log("in register of LoginService");
+
+        return this._http.post(LOGIN_URL + '/register', creds)
+            .map(this.afterRegister)
+            .catch(this.handleError);
+    }
+
+    private afterRegister(response: Response){
+        console.log(response.json());
+        return response.json();
+    }
+
     private saveToken(response: Response) {
         let json = response.json();
         //if (!this._ext.isNullOrWhitespace(json) && !this._ext.isNullOrWhitespace(json.token))

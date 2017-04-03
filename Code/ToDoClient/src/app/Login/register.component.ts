@@ -8,17 +8,16 @@ import {ICredential} from './Interfaces';
 
 @Component({
     //moduleId: module.id,
-    selector: '<app-login>',
-    templateUrl: 'login.component.html'
+    selector: '<app-register>',
+    templateUrl: 'register.component.html'
 })
-export class LoginComponent implements OnInit {
+export class RegisterComponent implements OnInit {
     creds: ICredential;
     errorMsg: string;
     constructor(private _loginService: LoginService, private _router: Router, private _logger:LoggerService) { }
 
-
     ngOnInit() {
-        this._logger.log("in ngoninit() of LoginComponent.")
+        this._logger.log("in ngoninit() of RegisterComponent.");
         this.creds = this.getNewCreds();
     }
 
@@ -27,32 +26,22 @@ export class LoginComponent implements OnInit {
         return { Username: "", Password: "", Email:"" };
     }
 
-    Login(): void {
+    Cancel(): void {
+        this.creds = this.getNewCreds();
+    }
 
-        this._loginService.login(this.creds)
+    Register():void{
+            this._loginService.register(this.creds)
             .subscribe(
                 data => {
+                    console.log(data);
                     this.creds = this.getNewCreds();
-                    this.goToList();
+                    this._router.navigate(['/login']);
                 },
                 error => {
-                    this.errorMsg = "Login Failure.";
+                    this.errorMsg = "Registration Failure.";
                     this._logger.log(this.errorMsg);
                 }
             );
     }
-
-    goToList(): void {
-        this._router.navigate(['/todo']);
-    }
-
-    Register(): void {
-        this._router.navigate(['/register']);
-    }
-
-    Cancel(): void {
-        this.creds = this.getNewCreds();
-        
-    }
-
 }
