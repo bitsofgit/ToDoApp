@@ -22,6 +22,8 @@ using ToDo.Web.Repository;
 using ToDo.Web.ViewModels;
 using System.Text;
 using ToDo.Web.Helpers;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace ToDo.Web
 {
@@ -45,12 +47,10 @@ namespace ToDo.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton(_config);
-            //const string ConnString = @"Server=tcp:ard.database.windows.net,1433;Data Source=ard.database.windows.net;Initial Catalog=ToDo;Persist Security Info=False;User ID=ard;Password=Akhil1012;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
-
+            
             services.AddScoped<IItemRepository, ItemRepository>();
             services.AddTransient<IdentityInitializer>();
-            services.AddTransient<JWTHelper>();
-
+            
             services.AddDbContext<ToDoContext>(options => options.UseSqlServer(_config["Data:ToDoContext"]));
 
             // Add caching
@@ -58,33 +58,48 @@ namespace ToDo.Web
 
             // Add Identity
             services.AddIdentity<AppUser, IdentityRole>()
-                .AddEntityFrameworkStores<ToDoContext>();
+                .AddEntityFrameworkStores<ToDoContext>()
+                .AddDefaultTokenProviders();
 
-            services.Configure<IdentityOptions>(config =>
-            {
-                config.Cookies.ApplicationCookie.Events = new CookieAuthenticationEvents()
-                {
-                    OnRedirectToLogin = (ctx) =>
-                    {
-                        if (ctx.Request.Path.StartsWithSegments("/api") && ctx.Response.StatusCode == 200)
-                        {
-                            ctx.Response.StatusCode = 401;
-                        }
-                        return Task.CompletedTask;
-                    },
-                    OnRedirectToAccessDenied = (ctx) =>
-                    {
-                        if (ctx.Request.Path.StartsWithSegments("/api") && ctx.Response.StatusCode == 200)
-                        {
-                            ctx.Response.StatusCode = 403;
-                        }
-                        return Task.CompletedTask;
-                    }
-                };
-                config.Cookies.ApplicationCookie.CookieName = "ToDoCookie";
-                config.Cookies.ApplicationCookie.ExpireTimeSpan = TimeSpan.FromHours(2);
-                
-            });
+            services.AddAuthentication().AddCookie(cfg => cfg.SlidingExpiration = true);
+            //    .AddJwtBearer(cfg =>
+            //{
+            //    cfg.RequireHttpsMetadata = false;
+            //    cfg.SaveToken = true;
+
+            //    cfg.TokenValidationParameters = new TokenValidationParameters()
+            //    {
+            //        ValidIssuer = _config["Tokens:Issuer"],
+            //        ValidAudience = _config["Tokens:Audience"],
+            //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Tokens:Key"])),
+            //    };
+            //});
+
+            //services.Configure<IdentityOptions>(config =>
+            //{
+            //    config.Cookies.ApplicationCookie.Events = new CookieAuthenticationEvents()
+            //    {
+            //        OnRedirectToLogin = (ctx) =>
+            //        {
+            //            if (ctx.Request.Path.StartsWithSegments("/api") && ctx.Response.StatusCode == 200)
+            //            {
+            //                ctx.Response.StatusCode = 401;
+            //            }
+            //            return Task.CompletedTask;
+            //        },
+            //        OnRedirectToAccessDenied = (ctx) =>
+            //        {
+            //            if (ctx.Request.Path.StartsWithSegments("/api") && ctx.Response.StatusCode == 200)
+            //            {
+            //                ctx.Response.StatusCode = 403;
+            //            }
+            //            return Task.CompletedTask;
+            //        }
+            //    };
+            //    config.Cookies.ApplicationCookie.CookieName = "ToDoCookie";
+            //    config.Cookies.ApplicationCookie.ExpireTimeSpan = TimeSpan.FromHours(2);
+
+            //});
 
             // Add CORS
             services.AddCors(options =>
@@ -119,7 +134,7 @@ namespace ToDo.Web
                 }
 
                 // global filters
-                options.Filters.Add(typeof(TimingActionFilter)); 
+                options.Filters.Add(typeof(TimingActionFilter));
                 options.Filters.Add(typeof(AuthFilter));
                 options.Filters.Add(new RequireHttpsAttribute());
             })
@@ -131,7 +146,7 @@ namespace ToDo.Web
 
                     // make output json indented
                     opt.SerializerSettings.Formatting = Formatting.Indented;
-                    
+
                 });
 
         }
@@ -156,22 +171,24 @@ namespace ToDo.Web
             app.UseDefaultFiles();
             app.UseStaticFiles();
 
-            app.UseIdentity();
+            //app.UseIdentity();
 
-            app.UseJwtBearerAuthentication(new JwtBearerOptions()
-            {
-                AutomaticAuthenticate = true,
-                AutomaticChallenge = true,
-                TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidIssuer = _config["Tokens:Issuer"],
-                    ValidAudience = _config["Tokens:Audience"],
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Tokens:Key"])),
-                    ValidateLifetime = true
-                }
-            });
-            
+            app.UseAuthentication();
+            //app.UseJwtBearerAuthentication(new JwtBearerOptions()
+            //{
+            //    AutomaticAuthenticate = true,
+            //    AutomaticChallenge = true,
+            //    TokenValidationParameters = new TokenValidationParameters()
+            //    {
+            //        ValidIssuer = _config["Tokens:Issuer"],
+            //        ValidAudience = _config["Tokens:Audience"],
+            //        ValidateIssuerSigningKey = true,
+            //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Tokens:Key"])),
+            //        ValidateLifetime = true
+            //    }
+            //});
+
+
             app.UseMvcWithDefaultRoute();
 
             InitializeAutoMapper();
@@ -181,7 +198,8 @@ namespace ToDo.Web
 
         private void InitializeAutoMapper()
         {
-            AutoMapper.Mapper.Initialize(config => {
+            AutoMapper.Mapper.Initialize(config =>
+            {
                 config.CreateMap<Item, ItemVM>().ReverseMap();
                 config.CreateMap<SubItem, SubItemVM>().ReverseMap();
                 config.CreateMap<Priority, PriorityVM>().ReverseMap();

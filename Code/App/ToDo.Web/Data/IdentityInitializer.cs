@@ -33,7 +33,7 @@ namespace ToDo.Web.Data
                 if (!(await _roleMgr.RoleExistsAsync("Admin")))
                 {
                     var role = new IdentityRole("Admin");
-                    role.Claims.Add(new IdentityRoleClaim<string>() { ClaimType = "IsAdmin", ClaimValue = "True" });
+                    //role.Claims.Add(new IdentityRoleClaim<string>() { ClaimType = "IsAdmin", ClaimValue = "True" });
                     await _roleMgr.CreateAsync(role);
                 }
 

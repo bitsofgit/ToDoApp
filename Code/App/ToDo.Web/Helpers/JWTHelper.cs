@@ -23,24 +23,25 @@ namespace ToDo.Web.Helpers
             _logger = logger;
         }
 
-        public async Task<AppUser> GetAppUser(ClaimsPrincipal user)
-        {
-            try
-            {
-                AppUser appUser = null;
-                var sub = @"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
-                var subClaim = user.Claims.Where(c => c.Type == sub).FirstOrDefault();
+        //public async Task<AppUser> GetAppUser(ClaimsPrincipal user)
+        //{
+        //    try
+        //    {
+        //        return await _userMgr.GetUserAsync(user);
 
-                if (subClaim != null && !string.IsNullOrWhiteSpace(subClaim.Value))
-                    appUser = await _userMgr.FindByNameAsync(subClaim.Value);
+        //        //var sub = @"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
+        //        //var subClaim = user.Claims.Where(c => c.Type == sub).FirstOrDefault();
 
-                return appUser;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Unable to get app user : {ex}");
-                throw;
-            }
-        }
+        //        //if (subClaim != null && !string.IsNullOrWhiteSpace(subClaim.Value))
+        //        //    appUser = await _userMgr.FindByNameAsync(subClaim.Value);
+
+        //        //return appUser;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError($"Unable to get app user : {ex}");
+        //        throw;
+        //    }
+        //}
     }
 }

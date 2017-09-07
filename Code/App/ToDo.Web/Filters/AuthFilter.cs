@@ -15,20 +15,16 @@ namespace ToDo.Web.Filters
 {
     public class AuthFilter : IAsyncAuthorizationFilter
     {
-        private JWTHelper _jwtHelper;
         private ILogger<TimingActionFilter> _logger;
         private UserManager<AppUser> _userMgr;
 
-        public AuthFilter(ILogger<TimingActionFilter> logger, UserManager<AppUser> userMgr, JWTHelper jwtHelper)
+        public AuthFilter(ILogger<TimingActionFilter> logger, UserManager<AppUser> userMgr)
         {
             logger.ExtIfNullThrowException("logger is null");
             _logger = logger;
             
             userMgr.ExtIfNullThrowException("userMgr is null");
             _userMgr = userMgr;
-
-            jwtHelper.ExtIfNullThrowException("jwtHelper is null");
-            _jwtHelper = jwtHelper;
         }
 
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
@@ -38,7 +34,7 @@ namespace ToDo.Web.Filters
                 var desc = context.ActionDescriptor as ControllerActionDescriptor;
                 if (desc.ControllerName == "Auth") return;
 
-                var appUser = await _jwtHelper.GetAppUser(context.HttpContext.User);
+                var appUser = await _userMgr.GetUserAsync(context.HttpContext.User);
 
                 if (appUser == null)
                 {

@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using ToDo.Web.Helpers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
@@ -31,8 +32,9 @@ namespace ToDo.Web.Controllers
         private readonly IItemRepository _repo;
         private IMemoryCache _memCache;
         private ILogger _logger;
+        private UserManager<AppUser> _userMgr;
 
-        public TodoController(IItemRepository repo, IMemoryCache memCache, ILogger<TodoController> logger)
+        public TodoController(IItemRepository repo, IMemoryCache memCache, ILogger<TodoController> logger, UserManager<AppUser> userMgr)
         {
             repo.ExtIfNullThrowException("repo is null");
             _repo = repo;
@@ -42,6 +44,9 @@ namespace ToDo.Web.Controllers
 
             logger.ExtIfNullThrowException("logger is null");
             _logger = logger;
+
+            userMgr.ExtIfNullThrowException("userMgr is null");
+            _userMgr = userMgr;
         }
         
         // GET api/Todo/GetPriority
@@ -78,6 +83,7 @@ namespace ToDo.Web.Controllers
 
         // GET api/Todo
         [HttpGet]
+        [AllowAnonymous]
         public async Task<JsonResult> Get()
         {
             try
