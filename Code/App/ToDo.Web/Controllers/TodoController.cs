@@ -23,7 +23,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace ToDo.Web.Controllers
 {
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [EnableCors("AllAllow")]
     [AddHeader("Author", "Akhil Deshpande @deshpandeakhil")]
     [Route("api/[controller]")]
@@ -48,7 +48,7 @@ namespace ToDo.Web.Controllers
             userMgr.ExtIfNullThrowException("userMgr is null");
             _userMgr = userMgr;
         }
-        
+
         // GET api/Todo/GetPriority
         [HttpGet]
         [Route("GetPriority")]
@@ -81,6 +81,18 @@ namespace ToDo.Web.Controllers
             }
         }
 
+        private async Task<AppUser> GetAppUser()
+        {
+            AppUser appUser = null;
+            var sub = @"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
+            var subClaim = User.Claims.Where(c => c.Type == sub).FirstOrDefault();
+
+            if (subClaim != null && !string.IsNullOrWhiteSpace(subClaim.Value))
+                appUser = await _userMgr.FindByNameAsync(subClaim.Value);
+
+            return appUser;
+        }
+
         // GET api/Todo
         [HttpGet]
         [AllowAnonymous]
@@ -88,7 +100,7 @@ namespace ToDo.Web.Controllers
         {
             try
             {
-                var appUser = (AppUser)RouteData.Values["AppUser"];
+                var appUser = await GetAppUser(); 
 
                 var items = _repo.GetAllItems(appUser.Id);
                 var results = Mapper.Map<IEnumerable<ItemVM>>(items);
@@ -107,8 +119,8 @@ namespace ToDo.Web.Controllers
         {
             try
             {
-                var appUser = (AppUser)RouteData.Values["AppUser"];
-               
+                var appUser = await GetAppUser();
+
                 var item = _repo.GetItemById(appUser.Id, itemId);
                 var result = Mapper.Map<ItemVM>(item);
                 return Json(result);
@@ -127,8 +139,8 @@ namespace ToDo.Web.Controllers
         {
             try
             {
-                var appUser = (AppUser)RouteData.Values["AppUser"];
-                
+                var appUser = await GetAppUser();
+
                 Item item = Mapper.Map<Item>(vm);
                 var addedItem = _repo.AddItem(appUser.Id, item);
                 if (addedItem == null)
@@ -157,8 +169,8 @@ namespace ToDo.Web.Controllers
         {
             try
             {
-                var appUser = (AppUser)RouteData.Values["AppUser"];
-               
+                var appUser = await GetAppUser();
+
                 Item newItem = Mapper.Map<Item>(vm);
 
                 var updatedItem = _repo.UpdateItem(appUser.Id, itemId, newItem);
@@ -201,8 +213,8 @@ namespace ToDo.Web.Controllers
         {
             try
             {
-                var appUser = (AppUser)RouteData.Values["AppUser"];
-                
+                var appUser = await GetAppUser();
+
                 if (_repo.DeleteItem(appUser.Id, itemId))
                 {
                     Response.StatusCode = (int)HttpStatusCode.OK;

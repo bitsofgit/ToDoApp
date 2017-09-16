@@ -47,10 +47,10 @@ namespace ToDo.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton(_config);
-            
+
             services.AddScoped<IItemRepository, ItemRepository>();
             services.AddTransient<IdentityInitializer>();
-            
+
             services.AddDbContext<ToDoContext>(options => options.UseSqlServer(_config["Data:ToDoContext"]));
 
             // Add caching
@@ -61,19 +61,28 @@ namespace ToDo.Web
                 .AddEntityFrameworkStores<ToDoContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddAuthentication().AddCookie(cfg => cfg.SlidingExpiration = true);
-            //    .AddJwtBearer(cfg =>
-            //{
-            //    cfg.RequireHttpsMetadata = false;
-            //    cfg.SaveToken = true;
+            services.AddAuthentication().AddJwtBearer(cfg =>
+            {
+                cfg.RequireHttpsMetadata = false;
+                cfg.SaveToken = true;
 
-            //    cfg.TokenValidationParameters = new TokenValidationParameters()
-            //    {
-            //        ValidIssuer = _config["Tokens:Issuer"],
-            //        ValidAudience = _config["Tokens:Audience"],
-            //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Tokens:Key"])),
-            //    };
+                cfg.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidIssuer = _config["Tokens:Issuer"],
+                    ValidAudience = _config["Tokens:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Tokens:Key"])),
+                };
+            });
+
+
+
+            //    .AddGoogle(go =>
+            //{
+            //    go.ClientId = _config["Authentication:web:client_id"];
+            //    go.ClientSecret = _config["Authentication:web:client_secret"];
             //});
+
+
 
             //services.Configure<IdentityOptions>(config =>
             //{
@@ -117,12 +126,19 @@ namespace ToDo.Web
                         .AllowAnyHeader()
                         .WithMethods("GET");
                 });
+
+                //options.AddPolicy("CookieCORS", cfg => {
+                //    cfg.WithOrigins("localhost:44388")
+                //    .AllowAnyMethod()
+                //    .AllowAnyHeader();
+                //});
             });
 
             // Add Authorization Policies
             services.AddAuthorization(config =>
             {
                 config.AddPolicy("SuperUsers", p => p.RequireClaim("SuperUser", "True"));
+                
             });
 
             // Add framework services.
@@ -134,8 +150,8 @@ namespace ToDo.Web
                 }
 
                 // global filters
-                options.Filters.Add(typeof(TimingActionFilter));
-                options.Filters.Add(typeof(AuthFilter));
+                options.Filters.Add(typeof(TimingActionFilter)); 
+                //options.Filters.Add(typeof(AuthFilter)); Authorizing through this filter was giving lots of problems, so removed it
                 options.Filters.Add(new RequireHttpsAttribute());
             })
             .AddJsonOptions(opt =>

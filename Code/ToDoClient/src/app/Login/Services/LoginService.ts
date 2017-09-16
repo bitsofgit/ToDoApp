@@ -13,6 +13,8 @@ const LOGIN_URL = "https://localhost:44388/api/auth";
 @Injectable()
 export class LoginService {
     private JWT: string = "JWT";
+    private AUTH_TOKEN:string = "AUTH_TOKEN";
+    private USERNAME:string = "USERNAME";
 
     constructor(private _http: Http, private _ext: ExtensionService, private _logger: LoggerService) {
         this._logger.log("constructing loginservice");
@@ -20,20 +22,47 @@ export class LoginService {
 
     public getJWTHeaderOption(): RequestOptions {
         let token = this.getJWT();
-        if (token != null) {
-            let headers = new Headers({ 'Authorization': 'Bearer ' + token });
-            return new RequestOptions({ headers: headers });
-        } else {
-            throw new Error("Unauthorized request.");
-        }
+         if (token != null) {
+             let headers = new Headers({ 'Authorization': 'Bearer ' + token });
+             return new RequestOptions({ headers: headers });
+         } else {
+             throw new Error("Unauthorized request.");
+         }
     }
 
     public login(creds: ICredential): Observable<Response> {
         this._logger.log("in login of LoginService");
-
+        
         return this._http.post(LOGIN_URL + '/token', creds)
-            .map(this.saveToken)
+            .map(response => {
+                let json = response.json();
+                //if (!this._ext.isNullOrWhitespace(json) && !this._ext.isNullOrWhitespace(json.token))
+                localStorage.setItem("AUTH_TOKEN", json.token.toString());
+                    //this.setItem(this.AUTH_TOKEN, json.token.toString());
+                localStorage.setItem("USERNAME", creds.Username);
+                return json;
+            })
             .catch(this.handleError);
+    }
+
+    public getUsername():string{
+         if(this.isAuthenticated())
+             return this.getItem(this.USERNAME);
+         else 
+            return "";
+    }
+
+    public setItem(name: string, val: string): void{
+        //localStorage.removeItem(name);
+        localStorage.setItem(name, val);
+    }
+
+    public getItem(name: string): string{
+        return localStorage.getItem(name);
+    }
+
+    public removeItem(name: string): void{
+        localStorage.removeItem(name);
     }
 
     public register(creds: ICredential): Observable<Response> {
@@ -53,19 +82,20 @@ export class LoginService {
         let json = response.json();
         //if (!this._ext.isNullOrWhitespace(json) && !this._ext.isNullOrWhitespace(json.token))
             localStorage.setItem("AUTH_TOKEN", json.token.toString());
-
+            //this.setItem(this.AUTH_TOKEN, json.token.toString());
+            //localStorage.setItem("USERNAME", this.uname);
         return json;
     }
 
     public isAuthenticated(): boolean {
-        if (localStorage.getItem("AUTH_TOKEN"))
+        if (this.getItem(this.AUTH_TOKEN))
             return true;
 
         return false;
     }
 
     public getJWT(): string {
-        let token = localStorage.getItem("AUTH_TOKEN");
+        let token = this.getItem(this.AUTH_TOKEN);
         //if (!this._ext.isNullOrWhitespace(token))
             return token;
 
@@ -73,7 +103,8 @@ export class LoginService {
     }
 
     public logout(): void {
-        localStorage.removeItem("AUTH_TOKEN");
+        this.removeItem(this.USERNAME);
+        this.removeItem(this.AUTH_TOKEN);
 
         //TODO: call server to logout as well
     }

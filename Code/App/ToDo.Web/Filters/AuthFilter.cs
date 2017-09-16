@@ -22,7 +22,7 @@ namespace ToDo.Web.Filters
         {
             logger.ExtIfNullThrowException("logger is null");
             _logger = logger;
-            
+
             userMgr.ExtIfNullThrowException("userMgr is null");
             _userMgr = userMgr;
         }
@@ -31,10 +31,18 @@ namespace ToDo.Web.Filters
         {
             try
             {
+                AppUser appUser = null;
                 var desc = context.ActionDescriptor as ControllerActionDescriptor;
-                if (desc.ControllerName == "Auth") return;
+                if (desc.ControllerName.ToUpper() == "AUTH" || desc.ControllerName.ToUpper() == "TODO") return;
 
-                var appUser = await _userMgr.GetUserAsync(context.HttpContext.User);
+                var sub = @"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
+                var subClaim = context.HttpContext.User.Claims.Where(c => c.Type == sub).FirstOrDefault();
+
+                if (subClaim != null && !string.IsNullOrWhiteSpace(subClaim.Value))
+                    appUser = await _userMgr.FindByNameAsync(subClaim.Value);
+
+                //var appUser = await _userMgr.GetUserAsync(context.HttpContext.User);
+                
 
                 if (appUser == null)
                 {

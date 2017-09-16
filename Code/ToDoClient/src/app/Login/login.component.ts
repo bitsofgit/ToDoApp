@@ -20,6 +20,7 @@ export class LoginComponent implements OnInit {
     ngOnInit() {
         this._logger.log("in ngoninit() of LoginComponent.")
         this.creds = this.getNewCreds();
+        this._loginService.logout();
     }
 
     getNewCreds(): ICredential {
