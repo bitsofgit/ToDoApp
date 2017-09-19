@@ -14,6 +14,7 @@ import {ICredential} from './Interfaces';
 export class RegisterComponent implements OnInit {
     creds: ICredential;
     errorMsg: string;
+    successMsg: string;
     constructor(private _loginService: LoginService, private _router: Router, private _logger:LoggerService) { }
 
     ngOnInit() {
@@ -23,11 +24,16 @@ export class RegisterComponent implements OnInit {
 
     getNewCreds(): ICredential {
         this.errorMsg = "";
+        this.successMsg = "";
         return { Username: "", Password: "", Email:"" };
     }
 
     Cancel(): void {
         this.creds = this.getNewCreds();
+    }
+
+    GoToLogin():void{
+        this._router.navigate(['/login']);
     }
 
     Register():void{
@@ -36,7 +42,7 @@ export class RegisterComponent implements OnInit {
                 data => {
                     console.log(data);
                     this.creds = this.getNewCreds();
-                    this._router.navigate(['/login']);
+                    this.successMsg = "Registration Successful!";
                 },
                 error => {
                     this.errorMsg = "Registration Failure.";

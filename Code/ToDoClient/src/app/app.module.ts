@@ -14,6 +14,7 @@ import {LoginModule} from './Login/login.module';
 import { LoginService } from "./Login/Services/LoginService";
 import { ExtensionService } from "./Shared/Services/ExtensionService";
 import { LoggerService } from "./Shared/Services/LoggerService";
+import { MessageService } from "./Shared/Services/MessageService";
 
 @NgModule({
     declarations: [
@@ -30,7 +31,7 @@ import { LoggerService } from "./Shared/Services/LoggerService";
         LoginModule
     ],
     bootstrap: [AppComponent],
-    providers: [FormBuilder, LoginService, ExtensionService, LoggerService ]
+    providers: [FormBuilder, LoginService, ExtensionService, LoggerService, MessageService ]
 })
 
 export class AppModule { }

@@ -156,7 +156,7 @@ namespace ToDo.Web.Controllers
                             return BadRequest("Unable to process request.");
                     }
                     else
-                        return BadRequest("Password doesn't match criteria.");
+                        return BadRequest("Password or Email doesn't match criteria.");
                 }
                 else
                     return BadRequest("Unable to process request.");

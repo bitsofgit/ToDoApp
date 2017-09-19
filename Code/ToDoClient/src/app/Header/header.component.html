@@ -2,7 +2,7 @@
     <h1>To Do List</h1>
     <a *ngIf="!IsAuthenticated" (click)="Login()">Login</a>
     <a *ngIf="IsAuthenticated" (click)="Logout()">Logout</a>
-    | <span *ngIf="IsAuthenticated">{{username}}</span>
+    | <span>{{username}}</span>
     | <a (click)="ShowHideLogs()">{{showLogs?'Hide Logs':'Show Logs'}}</a>
 
     <div *ngIf="showLogs" class="well well-sm">

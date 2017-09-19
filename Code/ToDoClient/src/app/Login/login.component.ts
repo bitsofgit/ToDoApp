@@ -1,8 +1,9 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
 
 import {LoginService} from './Services/LoginService';
 import {LoggerService} from '../Shared/Services/LoggerService';
+import {MessageService} from '../Shared/Services/MessageService';
 
 import {ICredential} from './Interfaces';
 
@@ -14,7 +15,8 @@ import {ICredential} from './Interfaces';
 export class LoginComponent implements OnInit {
     creds: ICredential;
     errorMsg: string;
-    constructor(private _loginService: LoginService, private _router: Router, private _logger:LoggerService) { }
+    
+    constructor(private _loginService: LoginService, private _router: Router, private _logger:LoggerService, private _msgService:MessageService) { }
 
 
     ngOnInit() {
@@ -25,7 +27,7 @@ export class LoginComponent implements OnInit {
 
     getNewCreds(): ICredential {
         this.errorMsg = "";
-        return { Username: "", Password: "", Email:"" };
+        return { Username: "akhildeshpande", Password: "P@ssw0rd!", Email:"" }; // password is populated only for dev purposes
     }
 
     Login(): void {
@@ -34,6 +36,7 @@ export class LoginComponent implements OnInit {
             .subscribe(
                 data => {
                     this.creds = this.getNewCreds();
+                    this._msgService.sendMessage(this._loginService.getUsername());
                     this.goToList();
                 },
                 error => {
@@ -55,5 +58,4 @@ export class LoginComponent implements OnInit {
         this.creds = this.getNewCreds();
         
     }
-
 }

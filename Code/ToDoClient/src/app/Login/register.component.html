@@ -5,7 +5,7 @@
 <div class="col-md-offset-1 col-md-10">
     <form (ngSubmit)="Register()" #registerForm="ngForm">
         <!--{{diagnostic}}-->
-        <div class="row">
+        <div class="row" *ngIf="successMsg.length == 0">
             <div class="form-group col-md-3">
                 <label for="Username">Username</label>
                 <input type="string" class="form-control"  required [(ngModel)]="creds.Username" name="Username">
@@ -22,7 +22,7 @@
             </div>
         </div>
 
-        <div class="row">
+        <div class="row" *ngIf="successMsg.length == 0">
             <div class="col-md-2">
                 <button type="submit" class="btn btn-xs btn-primary" [disabled]="!registerForm.form.valid"><i class="fa fa-sign-in"></i> Register</button>
                 <button class="btn btn-xs btn-danger" (click)="Cancel()"><i class="fa fa-minus"></i> Cancel</button>
@@ -31,6 +31,11 @@
         <br/>
         <div class="row alert alert-danger" *ngIf="errorMsg.length > 0">
             {{errorMsg}}
+        </div>
+        <div class="row alert alert-success" *ngIf="successMsg.length > 0">
+            {{successMsg}}
+            <br/>
+            <a (click)="GoToLogin()">Go to Login</a> 
         </div>
     </form>
 </div>
