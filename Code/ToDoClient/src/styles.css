@@ -16,7 +16,7 @@ h2, h3 {
 @import "~font-awesome/css/font-awesome.css";
 
 body { 
-  margin: 5px; 
+  margin: 10px; 
 }
 
 .ng-valid[required] {
@@ -32,7 +32,7 @@ a {
   cursor: hand;
 }
 
-
+html{margin-right: 10px;}
 /*
 
 button {

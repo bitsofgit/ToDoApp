@@ -21,16 +21,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
     constructor(private _loginService: LoginService, private _router: Router, private _logger: LoggerService, private _msgService:MessageService) {
         this._logger.log("constructing HeaderComponent")
         this.subscription = this._msgService.getMessage().subscribe(message => {
-            this._logger.log(message.text);
-            this.username = message.text;
-            this.IsAuthenticated = this._loginService.isAuthenticated();
+            this.UpdateUserName();
         });
     }
 
-    ngOnInit() {
+    UpdateUserName(): void{
         this.IsAuthenticated = this._loginService.isAuthenticated();
         if(this.IsAuthenticated)
             this.username = this._loginService.getUsername();
+    }
+
+    ngOnInit() {
+        this.UpdateUserName();
     }
 
     Logout(): void {
