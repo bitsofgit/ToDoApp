@@ -2,3 +2,51 @@
 <span>{{msg}}</span>
 <br/>
 
+<button class="btn btn-xs btn-primary" (click)="AddJob()"><i class="fa fa-plus"></i> Add Jobs</button>
+<button class="btn btn-xs btn-primary" (click)="StartProcessingJobs()"><i class="fa fa-plus"></i> Process Jobs</button>
+
+<hr/>
+<h2>Original Job Queue</h2>
+<span>Job Length: {{jobs.length}}</span>
+<div *ngIf="jobs.length > 0" class="well well-sm">
+    <div *ngFor="let job of jobs">
+        <span>Job Id: {{job.id}}</span>
+        <span *ngFor="let batch of job.batches">
+            [{{batch.id}},{{batch.duration}}]&nbsp;
+        </span>
+    </div>
+</div>
+<hr/>
+<h2>Job Queue</h2>
+<span>Job Length: {{jobs.length}}</span>
+<div *ngIf="jobs.length > 0" class="well well-sm">
+    <div *ngFor="let job of jobs">
+        <span>Job Id: {{job.id}}</span>
+        <span *ngFor="let batch of job.batches">
+            <span *ngIf="batch.startTime==null">
+            [{{batch.id}},{{batch.duration}}]&nbsp;
+        </span>
+        </span>
+    </div>
+</div>
+<hr/>
+<div class="row">
+    <div *ngFor="let server of servers" class="col-md-1 bordereddiv">
+        <h4><span class="label label-warning">Server - {{server.id}}</span></h4>
+        <div *ngFor="let bat of server.processing">
+            <p *ngIf="bat.status==true && bat.jobid%2==0" class="bg-success text-white peven">{{bat.jobid}} - [{{bat.id}},{{bat.duration}}] </p>
+            <p *ngIf="bat.status==true && bat.jobid%2==1" class="bg-success text-white podd">{{bat.jobid}} - [{{bat.id}},{{bat.duration}}] </p>
+
+            <p *ngIf="bat.status==false && bat.jobid%2==0" class="bg-primary text-white peven">{{bat.jobid}} - [{{bat.id}},{{bat.duration}}] </p>
+            <p *ngIf="bat.status==false && bat.jobid%2==1" class="bg-danger text-white podd">{{bat.jobid}} - [{{bat.id}},{{bat.duration}}]</p>
+
+        </div>
+    </div>
+</div>
+<hr/>
+<h3>Actual Order</h3>
+<div class="row">
+    <div class="col-md-1" *ngFor="let bat of orderedlist">
+        <p class="bg-info">{{bat.jobid}} - [{{bat.id}},{{bat.duration}}] - {{bat.server}}</p>
+    </div>
+</div>
