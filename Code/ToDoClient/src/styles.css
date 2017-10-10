@@ -45,6 +45,10 @@ html{margin-right: 10px;}
 .bordereddiv{
   border-left:0.5px solid orange;
 }
+
+hr{
+  border:2px solid orange;
+}
 /*
 
 button {

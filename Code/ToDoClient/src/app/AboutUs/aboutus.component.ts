@@ -55,10 +55,13 @@ export class AboutUsComponent implements OnInit {
         for (var i = 0; i < batchNums; i++) {
             arr.push(this.GetBatch(i, lj));
         }
+        
+        var jt = this.GetRandomNum(1,3);
 
         return {
             id: lj,
-            batches: arr
+            batches: arr,
+            type: jt
         };
     }
 
@@ -66,7 +69,7 @@ export class AboutUsComponent implements OnInit {
         return {
             id: id,
             jobid: jid,
-            duration: this.GetRandomNum(1, 60),
+            duration: this.GetRandomNum(1, 30),
             status: false,
             startTime: null,
             server:null
@@ -129,8 +132,11 @@ export class AboutUsComponent implements OnInit {
         //this.jobs[batch.jobid].batches.shift();
     }
 
-    PickJob(): IJob {
+    PickJob(pickSmall:boolean): IJob {
         for (let job of this.jobs) {
+            // check type
+            if(pickSmall && job.type != 1) continue;
+            
             // check if job has batches
             if(job.batches && job.batches.length == 0) {
                 //this.jobs.splice(this.jobs.indexOf(job),1);
@@ -139,15 +145,9 @@ export class AboutUsComponent implements OnInit {
             }
 
             // check if there are any unprocessed batch in the job
-            var hasBatches = false;
-            for(let batch of job.batches){
-                if(batch.startTime == null){
-                    hasBatches = true;
-                    break;
-                }
-            }
-            if(hasBatches == false) continue;
-            
+            if(this.DoesJobHavePendingBatches(job.id) == false) continue;
+
+             
             // check if max servers per job limit would be hit
             if (this.GetCountOfServersDoingAJob(job.id) < this.GetMaxServersPerJob()) {
                 return job;
@@ -162,7 +162,7 @@ export class AboutUsComponent implements OnInit {
     }
 
     GetMaxServersPerJob():number{
-        // if number of jobs is more than number of servers - return 1
+        // if number of pending jobs is more than number of servers - return 1
         // else return number of servers / number of jobs
         var pendingJobs = this.GetPendingJobsCount();
         if(pendingJobs > this.servers.length){
@@ -172,16 +172,21 @@ export class AboutUsComponent implements OnInit {
         }
     }
 
+    DoesJobHavePendingBatches(jid):boolean{
+        var hasBatches = false;
+        for(let bat of this.jobs[jid].batches){
+            if(bat.startTime == null){
+                hasBatches = true;
+                break;
+            }
+        }
+        return hasBatches;
+    }
+
     GetPendingJobsCount():number{
         var count = 0;
         for(let job of this.jobs){
-            var hasBatches = false;
-            for(let bat of job.batches){
-                if(bat.startTime == null){
-                    hasBatches = true;
-                }
-            }
-            if(hasBatches) count++;
+            if(this.DoesJobHavePendingBatches(job.id)) count++;
         }
         return count;
     }
@@ -190,13 +195,7 @@ export class AboutUsComponent implements OnInit {
         var count = 0;
         for(let job of this.jobs){
             if(job.id == jid) continue;
-            var hasBatches = false;
-            for(let bat of job.batches){
-                if(bat.startTime == null){
-                    hasBatches = true;
-                }
-            }
-            if(hasBatches) count++;
+            if(this.DoesJobHavePendingBatches(job.id)) count++;
         }
 
         return count == 0;
@@ -205,8 +204,11 @@ export class AboutUsComponent implements OnInit {
     PickFIFOBatch(ticks): void {
         if (this.jobs.length == 0) return;
         
-        var job = this.PickJob();
-        if (job == null) return;
+        var job = this.PickJob(true);
+        if (job == null) {
+            job = this.PickJob(false);
+        }
+        if(job == null) return;
 
         var batch = null;
         // find first not started batch
@@ -235,12 +237,12 @@ export class AboutUsComponent implements OnInit {
     }
 }
 
-
-// No job takes over all server
-
 export interface IJob {
     id: number,
-    batches: IBatch[]
+    batches: IBatch[],
+    type: number
+    // job has a type - S M L 
+    // small takes priority
 }
 
 export interface IBatch {
